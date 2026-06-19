@@ -8,12 +8,19 @@
 import type { FlightOffer, QuoteResult, SearchQuery } from "../types.ts";
 import { buildDeepLink, type Provider } from "./base.ts";
 
-const BASELINES: Record<string, number> = {
-  "HAN-BUD": 386,
-  "SGN-BUD": 359,
+type RouteInfo = { base: number; direct: boolean; airlines: string[] };
+
+const ROUTE_INFO: Record<string, RouteInfo> = {
+  "HAN-BUD": { base: 386, direct: false, airlines: ["China Eastern", "Qatar Airways", "Air China"] },
+  "SGN-BUD": { base: 359, direct: false, airlines: ["Turkish Airlines", "China Southern", "Qatar Airways"] },
+  "BUD-TLV": { base: 95, direct: true, airlines: ["Wizz Air", "El Al", "Ryanair"] },
 };
 
-const AIRLINES = ["China Eastern", "Qatar Airways", "Air China", "Turkish Airlines"];
+const DEFAULT_INFO: RouteInfo = {
+  base: 420,
+  direct: false,
+  airlines: ["China Eastern", "Qatar Airways", "Air China", "Turkish Airlines"],
+};
 
 function hashString(s: string): number {
   let h = 2166136261;
@@ -29,7 +36,7 @@ export class MockProvider implements Provider {
 
   async quote(query: SearchQuery): Promise<QuoteResult> {
     const { route, departDate } = query;
-    const baseline = BASELINES[route.id] ?? 420;
+    const info = ROUTE_INFO[route.id] ?? DEFAULT_INFO;
 
     // Deterministic-per-hour seed so prices drift over time but are stable within a run.
     const hourBucket = Math.floor(Date.now() / 3_600_000);
@@ -38,18 +45,22 @@ export class MockProvider implements Provider {
     // +/- 18% wave plus an occasional dip to simulate a flash deal.
     const wave = (seed - 0.5) * 0.36;
     const flashDeal = seed > 0.92 ? -0.15 : 0;
-    const price = Math.round(baseline * (1 + wave + flashDeal));
+    const price = Math.round(info.base * (1 + wave + flashDeal));
+
+    // Short, direct-served routes can have 0-stop offers; long-haul starts at 1.
+    const minStops = info.direct ? 0 : 1;
+    const baseDuration = info.direct ? 210 : 900;
 
     const offers: FlightOffer[] = [];
-    const stopCount = seed > 0.7 ? 1 : 1; // Vietnam->Budapest is always >=1 stop
     for (let i = 0; i < 3; i++) {
-      const airline = AIRLINES[Math.floor(hashString(route.id + i + departDate) * AIRLINES.length)]!;
+      const airline = info.airlines[Math.floor(hashString(route.id + i + departDate) * info.airlines.length)]!;
       offers.push({
-        price: price + i * Math.round(20 + seed * 30),
+        price: price + i * Math.round(15 + seed * 30),
         currency: query.currency,
         airline,
-        stops: Math.min(stopCount + (i === 2 ? 1 : 0), query.maxStops + 1),
-        durationMinutes: 900 + Math.round(seed * 360) + i * 45,
+        // The cheapest option may add a connection; later options add stops/price.
+        stops: minStops + (i === 2 ? 1 : 0),
+        durationMinutes: baseDuration + Math.round(seed * 240) + i * 45,
         deepLink: buildDeepLink(route.origin, route.destination, departDate),
       });
     }

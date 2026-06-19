@@ -22,7 +22,10 @@ export function buildSummary(cfg: Config, store: PriceStore, findings: Finding[]
 
   lines.push(`# ✈️ Flight Monitor — daily summary ${today}`);
   lines.push("");
-  lines.push(`Window: **${cfg.dates[0]} → ${cfg.dates.at(-1)}** · max stops: **${cfg.maxStops}** · provider: **${cfg.provider}**`);
+  const routeList = cfg.routeSpecs
+    .map((s) => `${s.route.id} (~${s.targetDate})`)
+    .join(", ");
+  lines.push(`Watching: **${routeList}** · ±${(cfg.routeSpecs[0]?.dates.length ?? 1) >> 1}d · max stops: **${cfg.maxStops}** · provider: **${cfg.provider}**`);
   lines.push("");
 
   lines.push("## Cheapest right now");

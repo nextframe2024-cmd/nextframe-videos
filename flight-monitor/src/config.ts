@@ -14,28 +14,43 @@ function num(name: string, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-/** Parse "HAN-BUD,SGN-BUD" into Route objects. */
-function parseRoutes(raw: string): Route[] {
+/** A route together with its own target departure date and scan window. */
+export type RouteSpec = {
+  route: Route;
+  targetDate: string;
+  dates: string[];
+};
+
+/**
+ * Parse "HAN-BUD@2026-07-23,BUD-TLV@2026-08-03" into route specs. The "@date"
+ * is optional; routes without one fall back to `defaultDate`. Each route gets
+ * its own ± `windowDays` scan window, so different routes can target different
+ * dates in a single cycle.
+ */
+function parseRoutes(raw: string, defaultDate: string, windowDays: number): RouteSpec[] {
   return raw
     .split(",")
     .map((s) => s.trim().toUpperCase())
     .filter(Boolean)
-    .map((pair) => {
-      const [origin, destination] = pair.split("-");
+    .map((entry) => {
+      const [pair, date] = entry.split("@");
+      const [origin, destination] = (pair ?? "").split("-");
       if (!origin || !destination) {
-        throw new Error(`Invalid route "${pair}" — expected ORIGIN-DESTINATION, e.g. HAN-BUD`);
+        throw new Error(`Invalid route "${entry}" — expected ORIGIN-DESTINATION[@YYYY-MM-DD], e.g. HAN-BUD@2026-07-23`);
       }
-      return { id: `${origin}-${destination}`, origin, destination };
+      const route: Route = { id: `${origin}-${destination}`, origin, destination };
+      const targetDate = date ?? defaultDate;
+      return { route, targetDate, dates: dateWindow(targetDate, windowDays) };
     });
 }
 
 /** Returns YYYY-MM-DD strings for [target - window, target + window]. */
 function dateWindow(target: string, windowDays: number): string[] {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(target)) {
-    throw new Error(`DEPART_DATE must be YYYY-MM-DD, got "${target}"`);
+    throw new Error(`Departure date must be YYYY-MM-DD, got "${target}"`);
   }
   const base = new Date(`${target}T00:00:00Z`);
-  if (Number.isNaN(base.getTime())) throw new Error(`Invalid DEPART_DATE "${target}"`);
+  if (Number.isNaN(base.getTime())) throw new Error(`Invalid departure date "${target}"`);
   const out: string[] = [];
   for (let d = -windowDays; d <= windowDays; d++) {
     const dt = new Date(base);
@@ -46,8 +61,7 @@ function dateWindow(target: string, windowDays: number): string[] {
 }
 
 export type Config = {
-  routes: Route[];
-  dates: string[];
+  routeSpecs: RouteSpec[];
   maxStops: number;
   currency: string;
   dropThreshold: number;
@@ -66,11 +80,15 @@ export type Config = {
 };
 
 export function loadConfig(): Config {
-  const routes = parseRoutes(env("ROUTES", "HAN-BUD,SGN-BUD"));
-  const dates = dateWindow(env("DEPART_DATE", "2026-07-23"), num("DATE_WINDOW_DAYS", 2));
+  const defaultDate = env("DEPART_DATE", "2026-07-23");
+  const windowDays = num("DATE_WINDOW_DAYS", 2);
+  const routeSpecs = parseRoutes(
+    env("ROUTES", "HAN-BUD@2026-07-23,SGN-BUD@2026-07-23,BUD-TLV@2026-08-03"),
+    defaultDate,
+    windowDays,
+  );
   return {
-    routes,
-    dates,
+    routeSpecs,
     maxStops: num("MAX_STOPS", 1),
     currency: env("CURRENCY", "USD"),
     dropThreshold: num("DROP_THRESHOLD", 0.12),
@@ -89,12 +107,12 @@ export function loadConfig(): Config {
   };
 }
 
-/** Expand routes x dates into the full set of search queries for one scan cycle. */
+/** Expand each route over its own date window into the full set of queries. */
 export function buildQueries(cfg: Config): SearchQuery[] {
   const queries: SearchQuery[] = [];
-  for (const route of cfg.routes) {
-    for (const departDate of cfg.dates) {
-      queries.push({ route, departDate, maxStops: cfg.maxStops, currency: cfg.currency });
+  for (const spec of cfg.routeSpecs) {
+    for (const departDate of spec.dates) {
+      queries.push({ route: spec.route, departDate, maxStops: cfg.maxStops, currency: cfg.currency });
     }
   }
   return queries;

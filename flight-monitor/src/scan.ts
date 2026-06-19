@@ -24,8 +24,7 @@ export async function runScanCycle(cfg: Config, store: PriceStore): Promise<Scan
 
   log.info("scan started", {
     provider: cfg.provider,
-    routes: cfg.routes.length,
-    dates: cfg.dates.length,
+    routes: cfg.routeSpecs.length,
     queries: queries.length,
   });
 

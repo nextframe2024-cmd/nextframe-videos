@@ -5,9 +5,10 @@ routes and dates on a schedule, stores every price in **SQLite**, detects
 **new all-time lows**, **abnormal drops** and **deals**, and sends **one daily
 summary** instead of flooding you with alerts.
 
-Built to track the cheapest **Vietnam → Budapest** flights around **23 Jul 2026**
-(one stop is fine — there are no direct flights on that route anyway), but the
-routes and dates are fully configurable.
+Ships preconfigured to track the cheapest **Vietnam → Budapest** flights around
+**23 Jul 2026** (one stop is fine — there are no direct flights on that route
+anyway) plus **Budapest → Tel Aviv** around **3 Aug 2026**. Each route carries
+its own target date, and everything is configurable.
 
 > Inspired by the "AI flight monitoring agent" idea: the easy part is the
 > pipeline; the hard part is scraping real sites with anti-bot/CAPTCHA. The
@@ -49,9 +50,9 @@ npm run typecheck   # full TypeScript check (needs `npm i -D typescript`)
 
 | Var | Default | Meaning |
 | --- | --- | --- |
-| `ROUTES` | `HAN-BUD,SGN-BUD` | Comma list of `ORIGIN-DESTINATION` IATA pairs |
-| `DEPART_DATE` | `2026-07-23` | Target departure date (YYYY-MM-DD) |
-| `DATE_WINDOW_DAYS` | `2` | Also scan ± this many days around the target |
+| `ROUTES` | `HAN-BUD@2026-07-23,SGN-BUD@2026-07-23,BUD-TLV@2026-08-03` | Comma list of `ORIGIN-DESTINATION[@YYYY-MM-DD]`; the per-route `@date` is optional |
+| `DEPART_DATE` | `2026-07-23` | Default date for routes given without an `@date` |
+| `DATE_WINDOW_DAYS` | `2` | Also scan ± this many days around each route's date |
 | `MAX_STOPS` | `1` | Max stops to consider |
 | `DROP_THRESHOLD` | `0.12` | Drop ≥ 12% vs last price → abnormal-drop |
 | `DEAL_PRICE` | `300` | Price ≤ this → deal |
