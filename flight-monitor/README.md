@@ -106,11 +106,24 @@ extraction selectors as the part most likely to need maintenance, and consider
 a partner API (Amadeus/Kiwi) if you need higher reliability. `src/providers/skyscanner.stub.ts`
 remains as a template for adding another source.
 
-## Docker / Coolify
+## Run on your own server (live, zero host footprint)
+
+Everything runs inside Docker — no Node, Chromium or system packages are
+installed on the host; the only thing written outside the container is `./data`.
+The image bundles Chromium, so `PROVIDER=playwright` scrapes live out of the box.
 
 ```bash
-docker compose up -d --build      # runs the 24/7 loop with a HEALTHCHECK
+git clone -b claude/flight-price-monitor-2hhzms \
+  https://github.com/nextframe2024-cmd/nextframe-videos.git
+cd nextframe-videos/flight-monitor
+cp .env.example .env          # set PROVIDER=playwright and your SMTP_* / EMAIL_TO
+./deploy.sh                    # build + start the 24/7 loop in the background
+docker compose logs -f        # watch it work
 ```
 
-The SQLite DB, summaries and heartbeat persist under `./data`. In Coolify, point
-a service at this folder, set the env vars, and it runs unattended.
+`docker compose down` stops it; `./data` (DB, summaries, heartbeat) is kept. In
+Coolify, point a service at this folder, set the env vars, and it runs unattended.
+
+> Heads-up: from a datacenter IP, Google Flights may serve an anti-bot challenge.
+> The provider handles that gracefully (`ok:false`), but for reliable live data
+> run on a residential/private host or add an API-based provider.
