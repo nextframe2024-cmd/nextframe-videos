@@ -13,9 +13,11 @@
     "summary": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/index.ts --summary-only",
     "loop": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/loop.ts",
     "test": "node --test --experimental-sqlite --no-warnings 'src/**/*.test.ts'",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "install:browser": "playwright install chromium"
   },
   "optionalDependencies": {
-    "nodemailer": "^6.9.14"
+    "nodemailer": "^6.9.14",
+    "playwright": "^1.48.0"
   }
 }

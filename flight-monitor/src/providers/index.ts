@@ -4,6 +4,7 @@ import type { QuoteResult, SearchQuery } from "../types.ts";
 import type { Provider } from "./base.ts";
 import { MockProvider } from "./mock.ts";
 import { SkyscannerProvider } from "./skyscanner.stub.ts";
+import { PlaywrightProvider } from "./playwright.ts";
 import { log } from "../logger.ts";
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -42,6 +43,10 @@ class CooldownProvider implements Provider {
       };
     }
   }
+
+  async close(): Promise<void> {
+    await this.inner.close?.();
+  }
 }
 
 export function getProvider(name: string, cooldownMs: number): Provider {
@@ -49,6 +54,11 @@ export function getProvider(name: string, cooldownMs: number): Provider {
   switch (name.toLowerCase()) {
     case "mock":
       inner = new MockProvider();
+      break;
+    case "playwright":
+    case "google":
+    case "googleflights":
+      inner = new PlaywrightProvider();
       break;
     case "skyscanner":
       inner = new SkyscannerProvider();

@@ -56,7 +56,7 @@ npm run typecheck   # full TypeScript check (needs `npm i -D typescript`)
 | `MAX_STOPS` | `1` | Max stops to consider |
 | `DROP_THRESHOLD` | `0.12` | Drop ≥ 12% vs last price → abnormal-drop |
 | `DEAL_PRICE` | `300` | Price ≤ this → deal |
-| `PROVIDER` | `mock` | `mock` or `skyscanner` (stub) |
+| `PROVIDER` | `mock` | `mock`, `playwright` (live Google Flights), or `skyscanner` (stub) |
 | `PROVIDER_COOLDOWN_MS` | `4000` | Min gap between provider requests |
 | `EMAIL_TO` / `SMTP_*` | — | Set to email the digest; otherwise it's written to a file |
 | `SCAN_INTERVAL_MS` | `21600000` | Loop interval (6h) for `npm run loop` |
@@ -79,13 +79,32 @@ config (routes × dates)
    email  or  data/summaries/*.md   +   data/health.json heartbeat
 ```
 
-## Going live with a real provider
+## Live scraping (Playwright → Google Flights)
 
-`src/providers/mock.ts` generates plausible prices offline. To scrape real data,
-implement `src/providers/skyscanner.stub.ts` (or a new provider) against the
-`Provider` interface — typically with Playwright driving Skyscanner / Google
-Flights, handling CAPTCHA and partial results — then set `PROVIDER=skyscanner`.
-Everything downstream (history, detection, digest, health) stays the same.
+`src/providers/playwright.ts` is a real provider that drives a headless Chromium
+against Google Flights, dismisses the consent wall, and extracts the cheapest
+itineraries from each result row's `aria-label` (more durable than obfuscated
+CSS classes). Everything downstream — history, detection, digest, health —
+stays identical; only the data source changes.
+
+```bash
+npm install                 # pulls in playwright (optional dep)
+npm run install:browser     # downloads the Chromium binary
+PROVIDER=playwright npm run scan
+```
+
+Tuning lives in `.env`: `HEADLESS`, `NAV_TIMEOUT_MS`, `PW_LOCALE`, `PW_TIMEZONE`,
+and `PROVIDER_COOLDOWN_MS` (keep this generous — a few seconds — to stay polite
+and reduce blocks).
+
+**Reality check (per the original post):** consumer flight sites run aggressive
+anti-bot defences (Cloudflare, CAPTCHA, consent walls) and change their DOM
+often. From a datacenter IP the page may return a challenge instead of results —
+the provider detects this and returns `ok:false` so the cycle keeps going. Run
+it from a residential/private host (as in the post) for best results, treat the
+extraction selectors as the part most likely to need maintenance, and consider
+a partner API (Amadeus/Kiwi) if you need higher reliability. `src/providers/skyscanner.stub.ts`
+remains as a template for adding another source.
 
 ## Docker / Coolify
 

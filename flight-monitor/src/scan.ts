@@ -28,49 +28,54 @@ export async function runScanCycle(cfg: Config, store: PriceStore): Promise<Scan
     queries: queries.length,
   });
 
-  for (const query of queries) {
-    const { id: routeId } = query.route;
-    const { departDate } = query;
+  try {
+    for (const query of queries) {
+      const { id: routeId } = query.route;
+      const { departDate } = query;
 
-    // Read history BEFORE inserting the new point.
-    const previousPrice = store.previousPrice(routeId, departDate);
-    const previousAllTimeLow = store.allTimeLow(routeId, departDate);
+      // Read history BEFORE inserting the new point.
+      const previousPrice = store.previousPrice(routeId, departDate);
+      const previousAllTimeLow = store.allTimeLow(routeId, departDate);
 
-    const result = await provider.quote(query);
-    if (!result.ok || !result.best) {
-      failed++;
-      log.warn("quote failed", { routeId, departDate, error: result.error });
-      continue;
+      const result = await provider.quote(query);
+      if (!result.ok || !result.best) {
+        failed++;
+        log.warn("quote failed", { routeId, departDate, error: result.error });
+        continue;
+      }
+      ok++;
+      const best = result.best;
+
+      const point: PricePoint = {
+        routeId,
+        departDate,
+        provider: result.provider,
+        price: best.price,
+        currency: best.currency,
+        airline: best.airline,
+        stops: best.stops,
+        deepLink: best.deepLink ?? null,
+        fetchedAt: result.fetchedAt,
+      };
+      store.insert(point);
+
+      const newFindings = analyze({
+        routeId,
+        departDate,
+        current: best,
+        previousPrice,
+        previousAllTimeLow,
+        dropThreshold: cfg.dropThreshold,
+        dealPrice: cfg.dealPrice,
+      });
+      for (const f of newFindings) {
+        log.info("finding", { kind: f.kind, routeId, departDate, msg: f.message });
+        findings.push(f);
+      }
     }
-    ok++;
-    const best = result.best;
-
-    const point: PricePoint = {
-      routeId,
-      departDate,
-      provider: result.provider,
-      price: best.price,
-      currency: best.currency,
-      airline: best.airline,
-      stops: best.stops,
-      deepLink: best.deepLink ?? null,
-      fetchedAt: result.fetchedAt,
-    };
-    store.insert(point);
-
-    const newFindings = analyze({
-      routeId,
-      departDate,
-      current: best,
-      previousPrice,
-      previousAllTimeLow,
-      dropThreshold: cfg.dropThreshold,
-      dealPrice: cfg.dealPrice,
-    });
-    for (const f of newFindings) {
-      log.info("finding", { kind: f.kind, routeId, departDate, msg: f.message });
-      findings.push(f);
-    }
+  } finally {
+    // Release provider resources (e.g. close the Playwright browser).
+    await provider.close?.();
   }
 
   log.info("scan finished", { ok, failed, findings: findings.length, totalRows: store.count() });
