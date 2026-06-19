@@ -1,0 +1,6 @@
+node_modules/
+# Runtime data (DB, summaries, heartbeat) — keep the folder, ignore contents.
+data/*
+!data/.gitkeep
+.env
+*.log

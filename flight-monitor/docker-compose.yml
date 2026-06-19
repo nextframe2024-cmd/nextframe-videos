@@ -1,0 +1,12 @@
+services:
+  flight-monitor:
+    build: .
+    container_name: flight-monitor
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Override the loop interval here if you like (default 6h).
+      SCAN_INTERVAL_MS: "21600000"
+    volumes:
+      - ./data:/app/data

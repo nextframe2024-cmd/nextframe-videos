@@ -1,0 +1,21 @@
+{
+  "name": "flight-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "24/7 flight price monitor — scans routes/dates, stores price history in SQLite, detects new lows/drops/deals, and emails a daily summary.",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "scan": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/index.ts",
+    "health": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/health.ts",
+    "summary": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/index.ts --summary-only",
+    "loop": "node --experimental-sqlite --no-warnings --env-file-if-exists=.env src/loop.ts",
+    "test": "node --test --experimental-sqlite --no-warnings 'src/**/*.test.ts'",
+    "typecheck": "tsc --noEmit"
+  },
+  "optionalDependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}
