@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>גט סקסי</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,7 +71,8 @@
 
   /* ---------- controls ---------- */
   .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-  input,select,textarea,button{font-family:inherit;font-size:15px;color:var(--ink)}
+  input,select,textarea,button{font-family:inherit;font-size:16px;color:var(--ink)}
+  .btn,.chip,.nav button,.qty button,.link{min-height:38px}
   .search{
     flex:1 1 190px;min-width:0;background:var(--surface);border:1px solid var(--line);
     border-radius:999px;padding:9px 15px;
@@ -93,7 +94,7 @@
   :is(button,input,select,textarea,summary,a):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
   /* ---------- form ---------- */
-  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px}
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px;scroll-margin-top:72px}
   .panel h2{font-family:var(--display);font-size:19px;margin:0 0 12px}
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   @media(max-width:560px){.grid{grid-template-columns:1fr}}
@@ -275,6 +276,96 @@
   .stream .k{font-size:12px;color:var(--muted);letter-spacing:.04em}
   .stream .v{font-family:var(--display);font-size:17px}
   .stream p{margin:0;font-size:13px;color:var(--muted)}
+
+  /* ---------- kinks ---------- */
+  .picker{display:flex;flex-wrap:wrap;gap:6px}
+  .kink{
+    background:transparent;border:1px solid var(--line);border-radius:999px;
+    padding:8px 13px;cursor:pointer;color:var(--muted);font-size:13.5px;min-height:38px;
+  }
+  .kink[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:#FFC6D3;font-weight:600}
+  .tag.kk{color:#FFC6D3;border-color:rgba(255,61,104,.45);background:var(--accent-soft)}
+  .fieldset{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+  .fieldset > .lbl{font-size:12.5px;color:var(--muted);letter-spacing:.03em;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .fieldset > .lbl span.count{color:var(--gold)}
+
+  /* ---------- photos ---------- */
+  .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+  .photo{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo button{
+    position:absolute;inset-block-start:4px;inset-inline-end:4px;width:26px;height:26px;border-radius:50%;
+    border:0;background:rgba(10,4,8,.72);color:#fff;cursor:pointer;font-size:15px;line-height:1;
+  }
+  .photo-add{
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
+    aspect-ratio:1;border:1px dashed var(--line);border-radius:12px;color:var(--muted);
+    font-size:12.5px;cursor:pointer;text-align:center;padding:6px;background:rgba(255,255,255,.02);
+  }
+  .photo-add:hover{border-color:var(--accent);color:#FFC6D3}
+  .photo-add input{display:none}
+  .gallery{grid-column:1/-1;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .gallery img{width:88px;height:88px;flex:none;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:zoom-in}
+  .lightbox{
+    position:fixed;inset:0;z-index:60;background:rgba(8,3,6,.94);
+    display:flex;align-items:center;justify-content:center;padding:18px;
+  }
+  .lightbox img{max-width:100%;max-height:88vh;border-radius:14px;box-shadow:0 30px 80px -30px #000}
+  .lightbox .close{
+    position:absolute;inset-block-start:14px;inset-inline-end:14px;width:42px;height:42px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;cursor:pointer;
+  }
+
+  /* ---------- kink stats ---------- */
+  .kink-stats{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:9px}
+  .kink-stats h3{font-family:var(--display);font-size:16px;margin:0 0 2px}
+  .kink-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;font-size:14px}
+  .kink-row .bar-wrap{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .kink-row .who{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12.5px}
+  .kink-row .avg{font-family:var(--display);font-size:17px;color:var(--gold);font-variant-numeric:tabular-nums}
+
+  /* ---------- phones ---------- */
+  @media(max-width:700px){
+    .nav{position:sticky;top:0;z-index:20;background:rgba(27,14,22,.94);backdrop-filter:blur(8px);align-self:stretch}
+    .shop-hero{padding:16px;border-radius:18px}
+    .cart-line{grid-template-columns:1fr auto;gap:6px 10px}
+    .cart-line .sum{grid-row:1;grid-column:2}
+    .cart-line .qty{grid-column:2;justify-content:flex-end}
+  }
+  @media(max-width:480px){
+    .wrap{padding:16px 13px calc(48px + env(safe-area-inset-bottom));gap:18px}
+    .brand h1{font-size:clamp(34px,12vw,46px)}
+    .brand .sub{font-size:14.5px}
+    .summary{gap:8px}
+    .tile{padding:10px 11px}
+    .tile .v{font-size:23px}
+    .controls{gap:7px}
+    .search{flex:1 1 100%}
+    .chips{flex:1 1 auto}
+    .controls .btn{flex:1 1 100%;text-align:center}
+    .entry{padding:12px;gap:10px}
+    .entry .name{font-size:18px}
+    .score{min-width:64px;padding:5px 7px}
+    .score .num{font-size:26px}
+    .bars{grid-template-columns:repeat(2,1fr);gap:7px}
+    .products{grid-template-columns:1fr}
+    .price-box .amt{font-size:34px}
+    .plan .amt{font-size:32px}
+    .gallery img{width:76px;height:76px}
+    .nav button{padding:8px 13px;font-size:14px}
+  }
+  @media(max-width:360px){
+    .summary{grid-template-columns:1fr 1fr;gap:7px}
+    .tile .v{font-size:21px}
+    .bars{grid-template-columns:1fr}
+    .entry{grid-template-columns:1fr}
+    .score{justify-self:stretch;display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+    .kink{padding:7px 11px;font-size:13px}
+  }
+  @media(hover:none){
+    .btn:hover,.link:hover,.photo-add:hover{filter:none}
+    button,summary,label.sub-toggle{-webkit-tap-highlight-color:rgba(255,61,104,.2)}
+  }
   footer.credit{color:#8E6C7D;font-size:12.5px;text-align:center}
 </style>
 </head>
@@ -306,6 +397,7 @@
       <button class="chip" data-g="m" aria-pressed="false">בחורים</button>
       <button class="chip" data-g="x" aria-pressed="false">אחר</button>
     </div>
+    <select class="sort" id="kinkFilter" aria-label="סינון לפי קטגוריה"><option value="all">כל הקטגוריות</option></select>
     <select class="sort" id="sort" aria-label="מיון">
       <option value="new">הכי חדש</option>
       <option value="high">ציון גבוה</option>
@@ -347,6 +439,17 @@
       </div>
 
       <div class="sliders" id="sliders"></div>
+
+      <div class="fieldset">
+        <span class="lbl">מה היה בפנים — קטגוריות <span class="count" id="kinkCount"></span></span>
+        <div class="picker" id="kinkPicker"></div>
+      </div>
+
+      <div class="fieldset">
+        <span class="lbl">תמונות <span class="count" id="photoLimitNote"></span></span>
+        <div class="photos" id="photoStrip"></div>
+        <p class="fineprint" style="margin:0">התמונות נשמרות רק במכשיר שלך, מוקטנות ונשמרות מחדש — כך גם נמחקים נתוני המיקום מהקובץ. העלה רק תמונות שמותר לך לשמור.</p>
+      </div>
 
       <div class="grid" style="margin-top:14px">
         <div class="field">
@@ -454,6 +557,7 @@
         <ul>
           <li>עד 10 רשומות</li>
           <li>דירוג מלא בחמישה צירים</li>
+          <li>קטגוריות, ותמונה אחת לרשומה</li>
           <li>חיפוש, סינון ומיון</li>
           <li>הכל נשמר במכשיר שלך</li>
         </ul>
@@ -464,7 +568,8 @@
         <div class="amt" id="planPrice">₪19.90<small> /חודש</small></div>
         <ul>
           <li>רשומות ללא הגבלה</li>
-          <li>סטטיסטיקת «מה עובד לך»</li>
+          <li>עד 6 תמונות לרשומה</li>
+          <li>סטטיסטיקת «מה עובד לך» ודירוג קטגוריות</li>
           <li>גיבוי ושחזור מלא</li>
           <li>15% הנחה קבועה בחנות</li>
           <li>משלוח חינם וקופסה ב־₪39</li>
@@ -497,6 +602,11 @@
   </div>
 
   <footer class="credit">גט סקסי · יומן פרטי · ללא שרתים, ללא חשבון, ללא שיתוף</footer>
+</div>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="close" id="lightboxClose" aria-label="סגירה">✕</button>
+  <img id="lightboxImg" alt="תמונה מהרשומה">
 </div>
 
 <div class="toast" id="toast" role="status"></div>
@@ -532,21 +642,46 @@
     {id:"after", label:"היחס אחרי", hint:"בבוקר ובהודעות"}
   ];
 
+  var KINKS = [
+    {id:"power",   label:"משחקי כוח"},
+    {id:"bond",    label:"קשירות"},
+    {id:"spank",   label:"ספנקינג"},
+    {id:"blind",   label:"כיסוי עיניים"},
+    {id:"role",    label:"משחקי תפקידים"},
+    {id:"toys",    label:"צעצועים"},
+    {id:"dirty",   label:"דירטי טוק"},
+    {id:"rough",   label:"גס יותר"},
+    {id:"slow",    label:"איטי ורומנטי"},
+    {id:"oral",    label:"אוראלי"},
+    {id:"outdoor", label:"בחוץ או בפומבי"},
+    {id:"photo",   label:"צילום בהסכמה"},
+    {id:"feet",    label:"פטיש רגליים"},
+    {id:"latex",   label:"לטקס ועור"},
+    {id:"edge",    label:"עיכוב שיא"},
+    {id:"group",   label:"יותר משניים"}
+  ];
+  var PHOTO_FREE = 1, PHOTO_PLUS = 6, PHOTO_MAX_DIM = 720, PHOTO_Q = 0.62;
+
+  function kinkLabel(id){
+    var k = KINKS.filter(function(x){ return x.id === id; })[0];
+    return k ? k.label : id;
+  }
+
   var DEMO = [
     {id:"d1", demo:true, name:"ד׳ מטינדר", gender:"f", date:"2026-08-29", place:"טינדר",
-     s:{chem:9,talk:7,kiss:9,bed:8,after:6}, repeat:"yes", tags:["ספונטני","אצלה"],
+     s:{chem:9,talk:7,kiss:9,bed:8,after:6}, repeat:"yes", tags:["ספונטני","אצלה"], kinks:["dirty","oral","slow"], photos:[],
      notes:"התחיל כקפה של חצי שעה ונגמר ב־2 בלילה. הכימיה הייתה מיידית, בבוקר קצת נעלמה."},
     {id:"d2", demo:true, name:"הבחור מהבר", gender:"m", date:"2026-08-14", place:"בר",
-     s:{chem:7,talk:4,kiss:8,bed:7,after:3}, repeat:"maybe", tags:["לילה אחד"],
+     s:{chem:7,talk:4,kiss:8,bed:7,after:3}, repeat:"maybe", tags:["לילה אחד"], kinks:["rough","power"], photos:[],
      notes:"פיזית מצוין, שיחה אפס. לא ענה יומיים ואז שלח \"מה קורה\"."},
     {id:"d3", demo:true, name:"מ׳ מהחתונה", gender:"x", date:"2026-07-02", place:"מסיבה",
-     s:{chem:8,talk:9,kiss:7,bed:6,after:9}, repeat:"yes", tags:["חברים משותפים","לילה ארוך"],
+     s:{chem:8,talk:9,kiss:7,bed:6,after:9}, repeat:"yes", tags:["חברים משותפים","לילה ארוך"], kinks:["bond","blind","toys","slow"], photos:[],
      notes:"הכי כיף לדבר איתו/ה מכולם. במיטה היה בסדר, אבל הצחוק שווה חזרה."}
   ];
 
   var $ = function(s){ return document.querySelector(s); };
   var entries = [];
-  var filter = {g:"all", q:"", sort:"new"};
+  var filter = {g:"all", q:"", sort:"new", kink:"all"};
 
   function esc(s){
     return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
@@ -562,7 +697,7 @@
   }
   function save(){
     try{ localStorage.setItem(KEY, JSON.stringify(entries)); }
-    catch(e){ toast("לא הצלחתי לשמור בדפדפן — כדאי להעתיק גיבוי"); }
+    catch(e){ toast("אין מקום פנוי בדפדפן — מחק כמה תמונות או רשומות ישנות"); }
   }
   function avg(e){
     var t = 0;
@@ -615,13 +750,124 @@
     $("#liveScore").textContent = fmt(t / CATS.length);
   }
 
+  /* ---------- kinks in the form ---------- */
+  var formKinks = [], formPhotos = [];
+
+  function buildKinks(){
+    $("#kinkPicker").innerHTML = KINKS.map(function(k){
+      return '<button type="button" class="kink" data-kink="' + k.id + '" aria-pressed="false">' + k.label + '</button>';
+    }).join("");
+    $("#kinkPicker").addEventListener("click", function(ev){
+      var b = ev.target.closest("button[data-kink]");
+      if(!b) return;
+      var id = b.getAttribute("data-kink");
+      var i = formKinks.indexOf(id);
+      if(i > -1) formKinks.splice(i, 1); else formKinks.push(id);
+      b.setAttribute("aria-pressed", String(i === -1));
+      $("#kinkCount").textContent = formKinks.length ? "· " + formKinks.length + " נבחרו" : "";
+    });
+  }
+  function syncKinkChips(){
+    Array.prototype.forEach.call($("#kinkPicker").querySelectorAll("button[data-kink]"), function(b){
+      b.setAttribute("aria-pressed", String(formKinks.indexOf(b.getAttribute("data-kink")) > -1));
+    });
+    $("#kinkCount").textContent = formKinks.length ? "· " + formKinks.length + " נבחרו" : "";
+  }
+  function buildKinkFilter(){
+    var sel = $("#kinkFilter");
+    sel.innerHTML = '<option value="all">כל הקטגוריות</option>' + KINKS.map(function(k){
+      return '<option value="' + k.id + '">' + k.label + '</option>';
+    }).join("");
+  }
+
+  /* ---------- photos ---------- */
+  function photoCap(){ return plus ? PHOTO_PLUS : PHOTO_FREE; }
+
+  function renderPhotoStrip(){
+    var cap = photoCap();
+    $("#photoLimitNote").textContent = "· " + formPhotos.length + " מתוך " + cap + (plus ? "" : " (פלוס: עד " + PHOTO_PLUS + ")");
+    var thumbs = formPhotos.map(function(src, i){
+      return '<div class="photo"><img src="' + src + '" alt="תמונה ' + (i + 1) + '">' +
+             '<button type="button" data-photo-del="' + i + '" aria-label="הסרת תמונה">✕</button></div>';
+    }).join("");
+    var adder = formPhotos.length < cap
+      ? '<label class="photo-add">+<span>הוספת תמונה</span><input type="file" id="photoInput" accept="image/*" multiple></label>'
+      : (plus ? '' : '<button type="button" class="photo-add" data-view-jump="plus">פלוס<span>עד ' + PHOTO_PLUS + ' תמונות</span></button>');
+    $("#photoStrip").innerHTML = thumbs + adder;
+
+    var inp = $("#photoInput");
+    if(inp) inp.addEventListener("change", function(){ addPhotos(this.files); this.value = ""; });
+    Array.prototype.forEach.call($("#photoStrip").querySelectorAll("[data-photo-del]"), function(b){
+      b.addEventListener("click", function(){
+        formPhotos.splice(Number(b.getAttribute("data-photo-del")), 1);
+        renderPhotoStrip();
+      });
+    });
+  }
+
+  function shrink(file, cb){
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function(){
+      var scale = Math.min(1, PHOTO_MAX_DIM / Math.max(img.width, img.height));
+      var c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(img.width * scale));
+      c.height = Math.max(1, Math.round(img.height * scale));
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      try{ cb(c.toDataURL("image/jpeg", PHOTO_Q)); }catch(e){ cb(null); }
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); cb(null); };
+    img.src = url;
+  }
+
+  function addPhotos(files){
+    var cap = photoCap();
+    var list = Array.prototype.slice.call(files || []).filter(function(f){ return /^image\//.test(f.type); });
+    if(!list.length) return;
+    if(formPhotos.length >= cap){
+      goPlus(plus ? "הגעת למקסימום התמונות" : "בחינם אפשר תמונה אחת לרשומה");
+      return;
+    }
+    var room = cap - formPhotos.length;
+    if(list.length > room){
+      list = list.slice(0, room);
+      toast("נוספו " + room + " תמונות — זו התקרה בתוכנית שלך");
+    }
+    var pending = list.length;
+    list.forEach(function(f){
+      shrink(f, function(data){
+        if(data) formPhotos.push(data);
+        if(--pending === 0) renderPhotoStrip();
+      });
+    });
+  }
+
+  /* ---------- lightbox ---------- */
+  function openLightbox(src){
+    $("#lightboxImg").src = src;
+    $("#lightbox").hidden = false;
+  }
+  function closeLightbox(){
+    $("#lightbox").hidden = true;
+    $("#lightboxImg").src = "";
+  }
+  $("#lightbox").addEventListener("click", function(ev){
+    if(ev.target === this || ev.target.id === "lightboxClose") closeLightbox();
+  });
+  document.addEventListener("keydown", function(ev){
+    if(ev.key === "Escape" && !$("#lightbox").hidden) closeLightbox();
+  });
+
   /* ---------- render ---------- */
   function visible(){
     var q = filter.q.trim().toLowerCase();
     var out = entries.filter(function(e){
       if(filter.g !== "all" && e.gender !== filter.g) return false;
+      if(filter.kink !== "all" && (e.kinks||[]).indexOf(filter.kink) === -1) return false;
       if(!q) return true;
-      var hay = (e.name + " " + (e.tags||[]).join(" ") + " " + (e.notes||"") + " " + (e.place||"")).toLowerCase();
+      var kinkText = (e.kinks||[]).map(kinkLabel).join(" ");
+      var hay = (e.name + " " + (e.tags||[]).join(" ") + " " + (e.notes||"") + " " + (e.place||"") + " " + kinkText).toLowerCase();
       return hay.indexOf(q) > -1;
     });
     out.sort(function(a,b){
@@ -665,7 +911,14 @@
         '<span class="tag">'+esc(hebDate(e.date))+'</span>',
         e.place ? '<span class="tag">'+esc(e.place)+'</span>' : "",
         '<span class="tag rep '+rep.c+'">'+rep.t+'</span>'
-      ].concat((e.tags||[]).map(function(t){ return '<span class="tag">#'+esc(t)+'</span>'; })).join("");
+      ].concat((e.kinks||[]).map(function(k){ return '<span class="tag kk">'+esc(kinkLabel(k))+'</span>'; }))
+       .concat((e.tags||[]).map(function(t){ return '<span class="tag">#'+esc(t)+'</span>'; })).join("");
+
+      var gallery = (e.photos && e.photos.length)
+        ? '<div class="gallery">' + e.photos.map(function(src, i){
+            return '<img src="' + src + '" alt="תמונה ' + (i+1) + ' מהרשומה" data-full="' + e.id + ':' + i + '">';
+          }).join("") + '</div>'
+        : "";
 
       var bars = CATS.map(function(c){
         var v = Number(e.s[c.id]) || 0;
@@ -677,6 +930,7 @@
         '<div class="who"><h3 class="name">'+esc(e.name)+'</h3><div class="meta">'+meta+'</div></div>' +
         '<div class="score"><div class="num">'+fmt(a)+'</div><div class="lbl">ציון כולל</div></div>' +
         '<div class="bars">'+bars+'</div>' +
+        gallery +
         (e.notes ? '<p class="notes">'+esc(e.notes)+'</p>' : "") +
         '<div class="row-actions">' +
           '<button class="link" data-edit="'+e.id+'">עריכה</button>' +
@@ -692,11 +946,11 @@
     host.hidden = false;
     if(!plus){
       host.innerHTML = '<div class="lock"><h3>מה עובד לך <span class="plus-badge">פלוס</span></h3>' +
-        '<p>הממוצע שלך בכל אחד מחמשת הצירים, ואחוז ה«שווה חזרה» — התמונה שמתחילה להיות מעניינת אחרי כמה רשומות.</p>' +
+        '<p>הממוצע שלך בכל אחד מחמשת הצירים, אחוז ה«שווה חזרה», ודירוג הקטגוריות לפי הציון שהן מביאות — התמונה שמתחילה להיות מעניינת אחרי כמה רשומות.</p>' +
         '<button class="btn" data-view-jump="plus">פתיחה עם פלוס</button></div>';
       return;
     }
-    host.innerHTML = '<h2>מה עובד לך</h2><div class="stat-rows" id="statRows"></div><div class="repeat-split" id="repeatSplit"></div>';
+    host.innerHTML = '<h2>מה עובד לך</h2><div class="stat-rows" id="statRows"></div><div class="repeat-split" id="repeatSplit"></div><div class="kink-stats" id="kinkStats"></div>';
     $("#statRows").innerHTML = CATS.map(function(c){
       var v = entries.reduce(function(t,e){ return t + (Number(e.s[c.id])||0); }, 0) / entries.length;
       return '<div class="stat-row"><span>'+c.label+'</span>' +
@@ -709,6 +963,23 @@
       '<span class="tag yes">כן · '+counts.yes+'</span>' +
       '<span class="tag maybe">אולי · '+counts.maybe+'</span>' +
       '<span class="tag no">לא · '+counts.no+'</span>';
+
+    var rank = KINKS.map(function(k){
+      var hits = entries.filter(function(e){ return (e.kinks||[]).indexOf(k.id) > -1; });
+      return {label:k.label, n:hits.length, avg: hits.length ? hits.reduce(function(t,e){ return t + avg(e); }, 0) / hits.length : 0};
+    }).filter(function(r){ return r.n > 0; }).sort(function(a,b){ return b.avg - a.avg || b.n - a.n; });
+
+    var ks = $("#kinkStats");
+    if(!rank.length){
+      ks.innerHTML = '<h3>קטגוריות</h3><p class="fineprint" style="margin:0">עוד לא סימנת קטגוריות ברשומות. סמן אותן בטופס ותראה כאן מה מעלה לך את הציון.</p>';
+      return;
+    }
+    ks.innerHTML = '<h3>הקטגוריות שמעלות לך את הציון</h3>' + rank.slice(0, 8).map(function(r){
+      return '<div class="kink-row"><span class="bar-wrap">' +
+        '<span class="who"><span>' + esc(r.label) + '</span><span>' + r.n + ' רשומות</span></span>' +
+        '<span class="track"><span class="fill" style="width:' + (r.avg * 10) + '%"></span></span>' +
+        '</span><span class="avg">' + fmt(r.avg) + '</span></div>';
+    }).join("");
   }
 
   function render(){
@@ -732,6 +1003,10 @@
     $("#repeat").value = entry ? entry.repeat : "maybe";
     $("#tags").value = entry ? (entry.tags||[]).join(", ") : "";
     $("#notes").value = entry ? (entry.notes||"") : "";
+    formKinks = entry ? (entry.kinks||[]).slice() : [];
+    formPhotos = entry ? (entry.photos||[]).slice() : [];
+    syncKinkChips();
+    renderPhotoStrip();
     CATS.forEach(function(c){
       var v = entry ? (entry.s[c.id] || 7) : 7;
       $("#s_"+c.id).value = v;
@@ -745,6 +1020,10 @@
     $("#formPanel").hidden = true;
     $("#entryForm").reset();
     $("#editId").value = "";
+    formKinks = [];
+    formPhotos = [];
+    syncKinkChips();
+    renderPhotoStrip();
   }
 
   $("#entryForm").addEventListener("submit", function(ev){
@@ -759,6 +1038,8 @@
       repeat: $("#repeat").value,
       tags: $("#tags").value.split(",").map(function(t){ return t.trim(); }).filter(Boolean).slice(0,8),
       notes: $("#notes").value.trim(),
+      kinks: formKinks.slice(),
+      photos: formPhotos.slice(),
       s: s
     };
     var id = $("#editId").value;
@@ -789,6 +1070,8 @@
   });
 
   $("#list").addEventListener("click", function(ev){
+    var full = ev.target.getAttribute && ev.target.getAttribute("data-full");
+    if(full){ openLightbox(ev.target.getAttribute("src")); return; }
     var ed = ev.target.getAttribute && ev.target.getAttribute("data-edit");
     var dl = ev.target.getAttribute && ev.target.getAttribute("data-del");
     if(ed){
@@ -806,6 +1089,7 @@
 
   $("#q").addEventListener("input", function(){ filter.q = this.value; renderList(); });
   $("#sort").addEventListener("change", function(){ filter.sort = this.value; renderList(); });
+  $("#kinkFilter").addEventListener("change", function(){ filter.kink = this.value; renderList(); });
   $("#genderFilter").addEventListener("click", function(ev){
     var b = ev.target.closest("button[data-g]");
     if(!b) return;
@@ -855,6 +1139,8 @@
         repeat: REPEAT[e.repeat] ? e.repeat : "maybe",
         tags: Array.isArray(e.tags) ? e.tags.slice(0,8) : [],
         notes: e.notes || "",
+        kinks: Array.isArray(e.kinks) ? e.kinks.filter(function(k){ return KINKS.some(function(x){ return x.id === k; }); }) : [],
+        photos: Array.isArray(e.photos) ? e.photos.filter(function(src){ return typeof src === "string" && src.indexOf("data:image/") === 0; }).slice(0, PHOTO_PLUS) : [],
         demo: !!e.demo,
         s: CATS.reduce(function(o,c){
           var v = Number(e.s[c.id]);
@@ -1057,6 +1343,7 @@
     render();
     renderProducts();
     renderCart();
+    renderPhotoStrip();
   }
   $("#planCta").addEventListener("click", function(){
     if(plus){ setPlus(false); toast("פלוס בוטל"); return; }
@@ -1067,6 +1354,8 @@
 
   /* ---------- init ---------- */
   buildSliders();
+  buildKinks();
+  buildKinkFilter();
   entries = load();
   plus = loadFlag(PLUS_KEY);
   box = loadFlag(BOX_KEY);
@@ -1076,6 +1365,7 @@
   render();
   renderProducts();
   renderCart();
+  renderPhotoStrip();
 })();
 </script>
 </body>
