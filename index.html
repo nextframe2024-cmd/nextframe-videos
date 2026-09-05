@@ -27,6 +27,7 @@
     --r:14px;
   }
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   body{
     margin:0;
     background:
@@ -178,6 +179,102 @@
   }
   .toast.on{opacity:1;transform:translateY(0)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+  /* ---------- nav ---------- */
+  .nav{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px;align-self:flex-start;max-width:100%;overflow-x:auto}
+  .nav button{
+    background:transparent;border:0;border-radius:999px;padding:8px 16px;cursor:pointer;
+    color:var(--muted);font-size:14.5px;font-weight:600;white-space:nowrap;
+  }
+  .nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);font-weight:800}
+  .nav button .dot{display:inline-block;min-width:18px;margin-inline-start:6px;padding:0 5px;border-radius:999px;background:var(--gold);color:var(--accent-ink);font-size:11.5px;font-weight:800}
+  .view{display:flex;flex-direction:column;gap:22px}
+  .plus-badge{font-size:11px;font-weight:800;color:var(--accent-ink);background:var(--gold);border-radius:999px;padding:1px 8px;vertical-align:middle}
+
+  /* ---------- locks ---------- */
+  .lock{
+    background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:18px;
+    display:flex;flex-direction:column;gap:8px;align-items:flex-start;
+    background-image:linear-gradient(180deg,rgba(240,180,74,.06),transparent 70%);
+  }
+  .lock h3{font-family:var(--display);font-size:18px;margin:0}
+  .lock p{margin:0;color:var(--muted);font-size:14px;max-width:56ch}
+
+  /* ---------- shop ---------- */
+  .shop-hero{
+    display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:center;
+    background:linear-gradient(210deg,#3A1526,var(--bg-2) 70%);
+    border:1px solid var(--line);border-radius:22px;padding:20px;
+  }
+  @media(max-width:620px){.shop-hero{grid-template-columns:1fr}}
+  .shop-hero h2{font-family:var(--display);font-size:clamp(24px,6vw,32px);margin:0 0 6px;text-wrap:balance}
+  .shop-hero p{margin:0 0 12px;color:var(--muted);font-size:14.5px;max-width:46ch}
+  .shop-hero ul{margin:0 0 14px;padding-inline-start:18px;color:#E4CDD7;font-size:14px;display:flex;flex-direction:column;gap:3px}
+  .price-box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center;display:flex;flex-direction:column;gap:6px}
+  .price-box .amt{font-family:var(--display);font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+  .price-box .amt small{font-size:15px;color:var(--muted);font-family:var(--body)}
+  .price-box .was{color:var(--muted);font-size:13px;text-decoration:line-through}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .section-head h2{font-family:var(--display);font-size:21px;margin:0}
+  .section-head span{color:var(--muted);font-size:13.5px}
+  .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .product{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px}
+  .product .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+  .product h3{font-family:var(--display);font-size:16.5px;margin:0;line-height:1.25}
+  .product .cost{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .product .desc{font-size:13.5px;color:var(--muted);margin:0;flex:1}
+  .product .rx{font-size:12px;color:var(--gold);border:1px solid rgba(240,180,74,.4);border-radius:8px;padding:6px 9px;background:rgba(240,180,74,.06)}
+  .product .buy{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .product.wide{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:center}
+  .product.wide h3{font-size:18px}
+  .product.wide .desc{grid-column:1/2}
+  .product.wide .buy{grid-column:2/3;grid-row:1/3;justify-content:flex-end}
+  @media(max-width:560px){.product.wide{grid-template-columns:1fr}.product.wide .desc,.product.wide .buy{grid-column:1/-1;grid-row:auto}}
+  .product .buy .btn{padding:8px 14px;font-size:14px}
+  .sub-toggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer}
+  .sub-toggle input{accent-color:var(--accent)}
+
+  /* ---------- cart ---------- */
+  .cart{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .cart h2{font-family:var(--display);font-size:19px;margin:0}
+  .cart-line{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;font-size:14.5px;border-bottom:1px solid var(--line);padding-bottom:9px}
+  .cart-line .nm{min-width:0}
+  .cart-line .nm b{display:block;font-weight:600}
+  .cart-line .nm span{font-size:12px;color:var(--muted)}
+  .qty{display:flex;align-items:center;gap:8px}
+  .qty button.wide{width:auto;padding:0 11px;font-size:13px}
+  .qty button{width:26px;height:26px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;font-size:15px;line-height:1}
+  .qty b{font-variant-numeric:tabular-nums;min-width:16px;text-align:center}
+  .cart-line .sum{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .totals{display:flex;flex-direction:column;gap:5px;font-size:14px;color:var(--muted)}
+  .totals .row{display:flex;justify-content:space-between;gap:10px}
+  .totals .row.grand{color:var(--ink);font-family:var(--display);font-size:20px;padding-top:6px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+  .totals .row.save{color:var(--good)}
+  .fineprint{font-size:12.5px;color:#8E6C7D;margin:0}
+
+  /* ---------- plans ---------- */
+  .billing-toggle{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;align-self:flex-start}
+  .billing-toggle button{background:transparent;border:0;border-radius:999px;padding:7px 15px;color:var(--muted);cursor:pointer;font-size:14px}
+  .billing-toggle button[aria-pressed="true"]{background:var(--accent-soft);color:#FFC6D3;border:1px solid var(--accent)}
+  .plans{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:620px){.plans{grid-template-columns:1fr}}
+  .plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .plan.hot{border-color:var(--accent);box-shadow:0 0 0 1px rgba(255,61,104,.25),0 18px 40px -28px var(--accent)}
+  .plan h3{font-family:var(--display);font-size:20px;margin:0}
+  .plan .amt{font-family:var(--display);font-size:38px;line-height:1;font-variant-numeric:tabular-nums}
+  .plan .amt small{font-size:14px;color:var(--muted);font-family:var(--body)}
+  .plan ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px;font-size:14.5px;flex:1}
+  .plan li{display:flex;gap:8px;align-items:flex-start}
+  .plan li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:8px}
+  .plan.free li::before{background:var(--line)}
+  .revenue{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px}
+  .revenue h2{font-family:var(--display);font-size:19px;margin:0 0 10px}
+  .revenue .streams{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:620px){.revenue .streams{grid-template-columns:1fr}}
+  .stream{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;display:flex;flex-direction:column;gap:4px}
+  .stream .k{font-size:12px;color:var(--muted);letter-spacing:.04em}
+  .stream .v{font-family:var(--display);font-size:17px}
+  .stream p{margin:0;font-size:13px;color:var(--muted)}
   footer.credit{color:#8E6C7D;font-size:12.5px;text-align:center}
 </style>
 </head>
@@ -189,6 +286,15 @@
     <p class="sub">היומן הפרטי שלך לסטוצים. מדרגים כימיה, שיחה, נשיקות, מיטה והיחס אחרי — ורואים עם הזמן מה באמת עובד לך.</p>
     <span class="privacy">הכל נשמר רק בדפדפן שלך. כדאי לכתוב כינוי, לא שם מלא.</span>
   </header>
+
+
+  <nav class="nav" id="nav" role="tablist" aria-label="ניווט">
+    <button role="tab" data-view="journal" aria-selected="true">היומן</button>
+    <button role="tab" data-view="shop" aria-selected="false">החנות<span class="dot" id="cartCount" hidden>0</span></button>
+    <button role="tab" data-view="plus" aria-selected="false">פלוס</button>
+  </nav>
+
+  <div class="view" id="view-journal">
 
   <section class="summary" id="summary" aria-label="סיכום"></section>
 
@@ -283,7 +389,7 @@
   </section>
 
   <details class="backup">
-    <summary>גיבוי ושחזור</summary>
+    <summary>גיבוי ושחזור <span class="plus-badge">פלוס</span></summary>
     <div class="inner">
       <p style="margin:0;color:var(--muted);font-size:13.5px">הרשומות חיות רק בדפדפן הזה. ניקוי היסטוריית הגלישה ימחק אותן — העתק גיבוי ושמור אצלך.</p>
       <div class="controls" style="gap:8px">
@@ -294,6 +400,101 @@
       <textarea id="backupBox" spellcheck="false" placeholder='הדבק כאן גיבוי (JSON) ולחץ "שחזר"'></textarea>
     </div>
   </details>
+
+  </div><!-- /view-journal -->
+
+  <div class="view" id="view-shop" hidden>
+    <section class="shop-hero">
+      <div>
+        <h2>קופסת החודש</h2>
+        <p>הדבר שתמיד חסר בדיוק ברגע הלא נכון, מגיע אליך הביתה פעם בחודש באריזה אטומה בלי לוגו.</p>
+        <ul>
+          <li>12 קונדומים לבחירה — דקים, XL או מגוון</li>
+          <li>לובריקנט על בסיס מים 100 מ״ל</li>
+          <li>מגבונים ובדיקת מלאי לפני כל משלוח</li>
+          <li>דילוג או ביטול בלחיצה, בלי התחייבות</li>
+        </ul>
+        <button class="btn" id="joinBox">הצטרפות לקופסה</button>
+      </div>
+      <div class="price-box">
+        <span class="was" id="boxWas">₪49 לחודש</span>
+        <span class="amt" id="boxPrice">₪49<small> /חודש</small></span>
+        <span style="color:var(--muted);font-size:13px" id="boxNote">מנויי פלוס: ₪39 ומשלוח חינם</span>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2>קנייה בודדת</h2>
+      <span>מנוי על מוצר חוסך 15% ומגיע אוטומטית כל חודש</span>
+    </div>
+    <div class="products" id="products"></div>
+
+    <section class="cart" id="cart">
+      <h2>הסל</h2>
+      <div id="cartLines"></div>
+      <div class="totals" id="cartTotals"></div>
+      <button class="btn" id="checkout">מעבר לתשלום</button>
+      <p class="fineprint">משלוח דיסקרטי ₪25, חינם מעל ₪199 ולמנויי פלוס. מוצרים הדורשים מרשם נשלחים רק לאחר אישור רופא/ה ומסופקים על ידי בית מרקחת מורשה.</p>
+    </section>
+  </div>
+
+  <div class="view" id="view-plus" hidden>
+    <div class="section-head">
+      <h2>גט סקסי פלוס</h2>
+      <span>היומן חינמי עד 10 רשומות. פלוס פותח את כל השאר.</span>
+    </div>
+    <div class="billing-toggle" id="billing" role="group" aria-label="מחזור חיוב">
+      <button data-cycle="month" aria-pressed="true">חודשי</button>
+      <button data-cycle="year" aria-pressed="false">שנתי · חיסכון 38%</button>
+    </div>
+    <div class="plans">
+      <div class="plan free">
+        <h3>חינם</h3>
+        <div class="amt">₪0</div>
+        <ul>
+          <li>עד 10 רשומות</li>
+          <li>דירוג מלא בחמישה צירים</li>
+          <li>חיפוש, סינון ומיון</li>
+          <li>הכל נשמר במכשיר שלך</li>
+        </ul>
+        <button class="btn ghost" disabled>זו התוכנית שלך</button>
+      </div>
+      <div class="plan hot">
+        <h3>פלוס</h3>
+        <div class="amt" id="planPrice">₪19.90<small> /חודש</small></div>
+        <ul>
+          <li>רשומות ללא הגבלה</li>
+          <li>סטטיסטיקת «מה עובד לך»</li>
+          <li>גיבוי ושחזור מלא</li>
+          <li>15% הנחה קבועה בחנות</li>
+          <li>משלוח חינם וקופסה ב־₪39</li>
+        </ul>
+        <button class="btn" id="planCta">שדרוג לפלוס</button>
+      </div>
+    </div>
+
+    <section class="revenue">
+      <h2>איך האפליקציה מתפרנסת</h2>
+      <div class="streams">
+        <div class="stream">
+          <span class="k">מנויים</span>
+          <span class="v">₪19.90 לחודש</span>
+          <p>הכנסה חוזרת מהיומן עצמו — הפיצ׳רים שמשתמש כבד צריך.</p>
+        </div>
+        <div class="stream">
+          <span class="k">קופסה חודשית</span>
+          <span class="v">₪49 לחודש</span>
+          <p>קונדומים ולובריקנט במשלוח קבוע. הכנסה חוזרת שנייה, עם מרווח על המוצר.</p>
+        </div>
+        <div class="stream">
+          <span class="k">מכירה בודדת</span>
+          <span class="v">₪35–₪199</span>
+          <p>קונדומים, לובריקנט, גלולת היום שאחרי וערכות בדיקה — לפי הצורך.</p>
+        </div>
+      </div>
+      <p class="fineprint" style="margin-top:12px">שתי ההכנסות מזינות זו את זו: המנוי מוזיל את החנות, והחנות מצדיקה את המנוי. גלולות למניעת היריון מחייבות מרשם ושיווק תרופות מחייב רישיון — בגרסה הזו זו חזית מכירה בלבד, בלי תשלום אמיתי מאחוריה.</p>
+    </section>
+  </div>
 
   <footer class="credit">גט סקסי · יומן פרטי · ללא שרתים, ללא חשבון, ללא שיתוף</footer>
 </div>
@@ -307,6 +508,21 @@
   document.documentElement.setAttribute("dir","rtl");
 
   var KEY = "getsexy.entries.v2";
+  var PLUS_KEY = "getsexy.plus.v1";
+  var CART_KEY = "getsexy.cart.v1";
+  var BOX_KEY = "getsexy.box.v1";
+  var FREE_LIMIT = 10;
+  var SHIP = 25, FREE_SHIP_FROM = 199, PLUS_DISCOUNT = 0.15, SUB_DISCOUNT = 0.15;
+
+  var PRODUCTS = [
+    {id:"thin",  name:"קונדומים דקים · 12 יח׳", price:39,  desc:"לטקס דק במיוחד, סטנדרט אירופי. הכי נמכר."},
+    {id:"xl",    name:"קונדומים XL · 12 יח׳",   price:45,  desc:"רוחב 57 מ״מ, לאלה שהמידה הרגילה לוחצת."},
+    {id:"mix",   name:"מגוון · 24 יח׳",          price:69,  desc:"דקים, מחוספסים וטעמים — לגלות מה עובד."},
+    {id:"lube",  name:"לובריקנט על בסיס מים · 100 מ״ל", price:35, desc:"בטוח לשימוש עם קונדומים, בלי דביקות."},
+    {id:"after", name:"גלולת היום שאחרי",        price:89,  desc:"לבונורגסטרל 1.5 מ״ג. יעילה עד 72 שעות, וכמה שיותר מוקדם יותר טוב.", note:"ללא מרשם, מסופק מבית מרקחת מורשה. לא אמצעי מניעה קבוע."},
+    {id:"pill",  name:"גלולות למניעת היריון · חבילה חודשית", price:45, desc:"מנוי חודשי מתחדש, מגיע אליך הביתה.", rx:true, note:"דורש מרשם. בקשה מקוונת לרופא/ה שותף/ה — ₪39 לפגישה, ואם אושר המשלוח מתחדש אוטומטית."},
+    {id:"test",  name:"ערכת בדיקת מין ביתית",     price:199, wide:true, desc:"דגימה עצמית, מעבדה מוסמכת, תשובה תוך 3 ימים באפליקציה. הכי הגיוני אחרי סטוץ בלי הגנה — ולפני שמפסיקים להשתמש בקונדום עם מישהו/י קבוע/ה."}
+  ];
 
   var CATS = [
     {id:"chem",  label:"כימיה",     hint:"המשיכה והניצוץ"},
@@ -471,9 +687,16 @@
   }
 
   function renderStats(){
-    var box = $("#stats");
-    if(entries.length < 2){ box.hidden = true; return; }
-    box.hidden = false;
+    var host = $("#stats");
+    if(entries.length < 2){ host.hidden = true; return; }
+    host.hidden = false;
+    if(!plus){
+      host.innerHTML = '<div class="lock"><h3>מה עובד לך <span class="plus-badge">פלוס</span></h3>' +
+        '<p>הממוצע שלך בכל אחד מחמשת הצירים, ואחוז ה«שווה חזרה» — התמונה שמתחילה להיות מעניינת אחרי כמה רשומות.</p>' +
+        '<button class="btn" data-view-jump="plus">פתיחה עם פלוס</button></div>';
+      return;
+    }
+    host.innerHTML = '<h2>מה עובד לך</h2><div class="stat-rows" id="statRows"></div><div class="repeat-split" id="repeatSplit"></div>';
     $("#statRows").innerHTML = CATS.map(function(c){
       var v = entries.reduce(function(t,e){ return t + (Number(e.s[c.id])||0); }, 0) / entries.length;
       return '<div class="stat-row"><span>'+c.label+'</span>' +
@@ -539,6 +762,10 @@
       s: s
     };
     var id = $("#editId").value;
+    if(!id && !plus && entries.length >= FREE_LIMIT){
+      goPlus("הגעת ל־" + FREE_LIMIT + " רשומות — פלוס פותח בלי הגבלה");
+      return;
+    }
     if(id){
       for(var i=0;i<entries.length;i++){
         if(entries[i].id === id){
@@ -595,6 +822,7 @@
   });
 
   $("#copyBackup").addEventListener("click", function(){
+    if(!plus){ goPlus("גיבוי ושחזור זמינים בפלוס"); return; }
     var json = JSON.stringify(entries, null, 2);
     $("#backupBox").value = json;
     if(navigator.clipboard && navigator.clipboard.writeText){
@@ -608,6 +836,7 @@
   });
 
   $("#restoreBackup").addEventListener("click", function(){
+    if(!plus){ goPlus("גיבוי ושחזור זמינים בפלוס"); return; }
     var txt = $("#backupBox").value.trim();
     if(!txt){ toast("הדבק קודם גיבוי בתיבה"); return; }
     var parsed;
@@ -643,9 +872,210 @@
     save(); render(); toast("הכל נמחק");
   });
 
+  /* ================= monetization ================= */
+  var plus = false, cart = {}, box = false, cycle = "month";
+
+  function loadFlag(k){ try{ return localStorage.getItem(k) === "1"; }catch(e){ return false; } }
+  function saveFlag(k,v){ try{ localStorage.setItem(k, v ? "1" : "0"); }catch(e){} }
+  function loadCart(){
+    try{ var r = localStorage.getItem(CART_KEY); if(r){ var o = JSON.parse(r); if(o && typeof o === "object") return o; } }catch(e){}
+    return {};
+  }
+  function saveCart(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){} }
+  function shekel(n){ return "₪" + (Math.round(n * 100) / 100).toLocaleString("he-IL"); }
+  function product(id){ return PRODUCTS.filter(function(p){ return p.id === id; })[0]; }
+
+  function setView(name){
+    ["journal","shop","plus"].forEach(function(v){
+      $("#view-" + v).hidden = (v !== name);
+    });
+    Array.prototype.forEach.call($("#nav").querySelectorAll("button"), function(b){
+      b.setAttribute("aria-selected", String(b.getAttribute("data-view") === name));
+    });
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+  $("#nav").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-view]");
+    if(b) setView(b.getAttribute("data-view"));
+  });
+
+  function goPlus(msg){
+    if(msg) toast(msg);
+    setView("plus");
+  }
+
+  /* ---------- shop ---------- */
+  function renderProducts(){
+    $("#products").innerHTML = PRODUCTS.map(function(p){
+      var line = cart[p.id];
+      var priced = plus ? p.price * (1 - PLUS_DISCOUNT) : p.price;
+      return '<article class="product' + (p.wide ? " wide" : "") + '">' +
+        '<div class="top"><h3>' + esc(p.name) + '</h3><span class="cost">' + shekel(priced) + '</span></div>' +
+        '<p class="desc">' + esc(p.desc) + '</p>' +
+        (p.note ? '<p class="rx">' + esc(p.note) + '</p>' : "") +
+        '<div class="buy">' +
+          (p.rx
+            ? '<button class="btn ghost" data-rx="' + p.id + '">התחלת בקשת מרשם</button>'
+            : (line
+                ? '<span class="qty"><button data-minus="' + p.id + '" aria-label="הפחתה">−</button><b>' + line.qty + '</b><button data-plus="' + p.id + '" aria-label="הוספה">+</button></span>'
+                : '<button class="btn" data-add="' + p.id + '">הוספה לסל</button>') +
+              '<label class="sub-toggle"><input type="checkbox" data-sub="' + p.id + '"' + (line && line.sub ? " checked" : "") + '> כל חודש (−15%)</label>') +
+        '</div>' +
+      '</article>';
+    }).join("");
+  }
+
+  function cartTotals(){
+    var sub = 0, saved = 0, monthly = 0;
+    Object.keys(cart).forEach(function(id){
+      var p = product(id); if(!p) return;
+      var line = cart[id];
+      var unit = p.price;
+      var full = unit * line.qty;
+      var pay = full;
+      if(line.sub) pay *= (1 - SUB_DISCOUNT);
+      if(plus) pay *= (1 - PLUS_DISCOUNT);
+      sub += pay; saved += full - pay;
+      if(line.sub) monthly += pay;
+    });
+    if(box){
+      var b = plus ? 39 : 49;
+      sub += b; monthly += b;
+      if(plus) saved += 10;
+    }
+    var ship = (sub === 0 || plus || sub >= FREE_SHIP_FROM) ? 0 : SHIP;
+    return {sub:sub, saved:saved, ship:ship, total:sub + ship, monthly:monthly};
+  }
+
+  function renderCart(){
+    var ids = Object.keys(cart);
+    var lines = ids.map(function(id){
+      var p = product(id); if(!p) return "";
+      var line = cart[id];
+      var unit = p.price * (line.sub ? 1 - SUB_DISCOUNT : 1) * (plus ? 1 - PLUS_DISCOUNT : 1);
+      return '<div class="cart-line"><span class="nm"><b>' + esc(p.name) + '</b>' +
+        '<span>' + (line.sub ? "מתחדש כל חודש" : "קנייה חד־פעמית") + ' · ' + shekel(unit) + ' ליחידה</span></span>' +
+        '<span class="qty"><button data-minus="' + id + '" aria-label="הפחתה">−</button><b>' + line.qty + '</b><button data-plus="' + id + '" aria-label="הוספה">+</button></span>' +
+        '<span class="sum">' + shekel(unit * line.qty) + '</span></div>';
+    }).join("");
+
+    if(box){
+      lines = '<div class="cart-line"><span class="nm"><b>קופסת החודש</b>' +
+        '<span>מתחדש כל חודש · ביטול בכל עת</span></span>' +
+        '<span class="qty"><button class="wide" data-box="off">הסרה</button></span>' +
+        '<span class="sum">' + shekel(plus ? 39 : 49) + '</span></div>' + lines;
+    }
+
+    $("#cartLines").innerHTML = lines || '<p class="fineprint" style="padding:6px 0">הסל ריק. הקופסה החודשית היא הדרך הזולה להתחיל.</p>';
+
+    var t = cartTotals();
+    var rows = '<div class="row"><span>ביניים</span><span>' + shekel(t.sub) + '</span></div>';
+    if(t.saved > 0) rows += '<div class="row save"><span>חיסכון' + (plus ? " (כולל 15% פלוס)" : "") + '</span><span>−' + shekel(t.saved) + '</span></div>';
+    rows += '<div class="row"><span>משלוח דיסקרטי</span><span>' + (t.ship ? shekel(t.ship) : "חינם") + '</span></div>';
+    rows += '<div class="row grand"><span>לתשלום</span><span>' + shekel(t.total) + '</span></div>';
+    if(t.monthly > 0) rows += '<div class="row"><span>מתוכו מתחדש כל חודש</span><span>' + shekel(t.monthly) + '</span></div>';
+    $("#cartTotals").innerHTML = rows;
+
+    var count = ids.reduce(function(n,id){ return n + cart[id].qty; }, 0) + (box ? 1 : 0);
+    var badge = $("#cartCount");
+    badge.hidden = count === 0;
+    badge.textContent = count;
+
+    $("#boxPrice").innerHTML = (plus ? "₪39" : "₪49") + '<small> /חודש</small>';
+    $("#boxWas").hidden = !plus;
+    $("#boxNote").textContent = plus ? "מחיר פלוס פעיל · משלוח חינם" : "מנויי פלוס: ₪39 ומשלוח חינם";
+    $("#joinBox").textContent = box ? "הקופסה בסל · הסרה" : "הצטרפות לקופסה";
+  }
+
+  function bump(id, delta){
+    var line = cart[id] || {qty:0, sub:false};
+    line.qty += delta;
+    if(line.qty <= 0) delete cart[id]; else cart[id] = line;
+    saveCart(); renderProducts(); renderCart();
+  }
+
+  document.addEventListener("click", function(ev){
+    var t = ev.target;
+    if(!t.getAttribute) return;
+    var add = t.getAttribute("data-add"), plusBtn = t.getAttribute("data-plus"),
+        minus = t.getAttribute("data-minus"), rx = t.getAttribute("data-rx"),
+        boxOff = t.getAttribute("data-box");
+    var jump = t.getAttribute("data-view-jump");
+    if(jump){ setView(jump); return; }
+    if(add){ bump(add, 1); toast("נוסף לסל"); }
+    if(plusBtn) bump(plusBtn, 1);
+    if(minus) bump(minus, -1);
+    if(boxOff === "off"){ box = false; saveFlag(BOX_KEY, false); renderCart(); }
+    if(rx){
+      var p = product(rx);
+      toast("בקשת מרשם היא הדגמה בלבד — אין כאן רופא/ה אמיתי/ת");
+      alert("בקשת מרשם ל" + p.name + "\n\nבמוצר אמיתי כאן היה נפתח שאלון רפואי קצר ופנייה לרופא/ה שותף/ה (₪39). המרשם, אם יאושר, היה מפעיל משלוח חודשי מתחדש מבית מרקחת מורשה.\n\nבגרסה הזו זו חזית בלבד: אין ייעוץ רפואי, אין תשלום ואין הזמנה.");
+    }
+  });
+
+  document.addEventListener("change", function(ev){
+    var id = ev.target.getAttribute && ev.target.getAttribute("data-sub");
+    if(!id) return;
+    if(!cart[id]) cart[id] = {qty:1, sub:false};
+    cart[id].sub = ev.target.checked;
+    saveCart(); renderProducts(); renderCart();
+  });
+
+  $("#joinBox").addEventListener("click", function(){
+    box = !box;
+    saveFlag(BOX_KEY, box);
+    renderCart();
+    toast(box ? "הקופסה נוספה לסל" : "הקופסה הוסרה");
+  });
+
+  $("#checkout").addEventListener("click", function(){
+    var t = cartTotals();
+    if(t.total === 0){ toast("הסל ריק"); return; }
+    alert("סיכום הזמנה\n\nלתשלום עכשיו: " + shekel(t.total) +
+      (t.monthly ? "\nמתחדש כל חודש: " + shekel(t.monthly) : "") +
+      "\n\nזו הדגמה — אין כאן סליקה, לא נאסף אמצעי תשלום ולא תישלח שום חבילה.");
+  });
+
+  /* ---------- plus ---------- */
+  function planPrice(){
+    return cycle === "month" ? "₪19.90<small> /חודש</small>" : "₪149<small> /שנה · ₪12.40 לחודש</small>";
+  }
+  $("#billing").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-cycle]");
+    if(!b) return;
+    cycle = b.getAttribute("data-cycle");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    $("#planPrice").innerHTML = planPrice();
+  });
+
+  function setPlus(v){
+    plus = v;
+    saveFlag(PLUS_KEY, v);
+    $("#planCta").textContent = plus ? "ביטול פלוס (הדגמה)" : "שדרוג לפלוס";
+    render();
+    renderProducts();
+    renderCart();
+  }
+  $("#planCta").addEventListener("click", function(){
+    if(plus){ setPlus(false); toast("פלוס בוטל"); return; }
+    setPlus(true);
+    toast("פלוס פעיל · זו הדגמה, לא בוצע חיוב");
+    setView("journal");
+  });
+
+  /* ---------- init ---------- */
   buildSliders();
   entries = load();
+  plus = loadFlag(PLUS_KEY);
+  box = loadFlag(BOX_KEY);
+  cart = loadCart();
+  $("#planCta").textContent = plus ? "ביטול פלוס (הדגמה)" : "שדרוג לפלוס";
+  $("#planPrice").innerHTML = planPrice();
   render();
+  renderProducts();
+  renderCart();
 })();
 </script>
 </body>
