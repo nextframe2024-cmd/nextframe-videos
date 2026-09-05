@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>גט סקסי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Secular+One&display=swap">
+<style>
+  :root{
+    --bg:#140A10;
+    --bg-2:#1B0E16;
+    --surface:#241420;
+    --surface-2:#2E1A28;
+    --line:#3D2434;
+    --ink:#F7E9EF;
+    --muted:#C199AC;
+    --accent:#FF3D68;
+    --accent-ink:#2A0710;
+    --accent-soft:rgba(255,61,104,.13);
+    --gold:#F0B44A;
+    --good:#4FD3A0;
+    --cold:#7C6B99;
+    --display:"Secular One","Assistant","Arial Hebrew",system-ui,sans-serif;
+    --body:"Assistant","Arial Hebrew",system-ui,-apple-system,sans-serif;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:
+      radial-gradient(120% 60% at 100% 0%, #33121F 0%, rgba(51,18,31,0) 55%),
+      radial-gradient(90% 50% at 0% 10%, #21122B 0%, rgba(33,18,43,0) 60%),
+      var(--bg);
+    color:var(--ink);
+    direction:rtl;
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:22px 18px 64px;display:flex;flex-direction:column;gap:22px}
+
+  /* ---------- brand ---------- */
+  .brand{display:flex;flex-direction:column;gap:6px}
+  .brand h1{
+    font-family:var(--display);
+    font-size:clamp(38px,10vw,60px);
+    line-height:.95;margin:0;letter-spacing:-.5px;
+    text-wrap:balance;
+    background:linear-gradient(200deg,#FFF0F4 10%,var(--accent) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand .sub{color:var(--muted);font-size:15px;max-width:52ch}
+  .brand .privacy{
+    align-self:flex-start;display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:4px 11px;background:rgba(255,255,255,.02);
+  }
+  .brand .privacy::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--good)}
+
+  /* ---------- summary ---------- */
+  .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;display:flex;flex-direction:column;gap:2px}
+  .tile .k{font-size:11.5px;letter-spacing:.06em;color:var(--muted)}
+  .tile .v{font-family:var(--display);font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+  .tile .v small{font-size:14px;color:var(--muted);font-family:var(--body)}
+  @media(max-width:560px){.summary{grid-template-columns:repeat(2,1fr)}}
+
+  /* ---------- controls ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+  input,select,textarea,button{font-family:inherit;font-size:15px;color:var(--ink)}
+  .search{
+    flex:1 1 190px;min-width:0;background:var(--surface);border:1px solid var(--line);
+    border-radius:999px;padding:9px 15px;
+  }
+  .search::placeholder{color:#8E6C7D}
+  select.sort{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 13px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    background:transparent;border:1px solid var(--line);border-radius:999px;
+    padding:7px 13px;cursor:pointer;color:var(--muted);font-size:14px;
+  }
+  .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:#FFC6D3}
+  .btn{
+    background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;
+    padding:10px 18px;font-weight:800;cursor:pointer;
+  }
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:600}
+  .btn:hover{filter:brightness(1.08)}
+  :is(button,input,select,textarea,summary,a):focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  /* ---------- form ---------- */
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px}
+  .panel h2{font-family:var(--display);font-size:19px;margin:0 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field label{font-size:12.5px;color:var(--muted);letter-spacing:.03em}
+  .field input,.field select,.field textarea{
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%;
+  }
+  .field textarea{resize:vertical;min-height:64px}
+  .sliders{margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
+  @media(max-width:560px){.sliders{grid-template-columns:1fr}}
+  .slider{display:flex;flex-direction:column;gap:2px}
+  .slider .top{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px}
+  .slider .top b{font-family:var(--display);font-size:17px;font-variant-numeric:tabular-nums;color:var(--gold)}
+  .slider .hint{font-size:11.5px;color:#906F80}
+  input[type=range]{accent-color:var(--accent);width:100%;margin:2px 0}
+  .form-actions{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap;align-items:center}
+  .form-actions .live{margin-inline-start:auto;font-size:13px;color:var(--muted)}
+  .form-actions .live b{font-family:var(--display);font-size:20px;color:var(--accent)}
+
+  /* ---------- demo banner ---------- */
+  .demo-note{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    border:1px dashed var(--line);border-radius:var(--r);padding:10px 13px;
+    font-size:13.5px;color:var(--muted);background:rgba(240,180,74,.05);
+  }
+  .demo-note b{color:var(--gold);font-weight:600}
+
+  /* ---------- list ---------- */
+  .list{display:flex;flex-direction:column;gap:12px}
+  .entry{
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    padding:14px 15px;display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:start;
+    border-inline-start:4px solid var(--tier,var(--line));
+  }
+  .entry .who{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .entry .name{font-family:var(--display);font-size:20px;line-height:1.2;word-break:break-word}
+  .meta{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:rgba(255,255,255,.02)}
+  .tag.rep{border-color:currentColor}
+  .tag.yes{color:var(--good)}
+  .tag.maybe{color:var(--gold)}
+  .tag.no{color:var(--cold)}
+  .score{
+    justify-self:end;text-align:center;min-width:74px;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:6px 8px;
+  }
+  .score .num{font-family:var(--display);font-size:30px;line-height:1;color:var(--tier,var(--ink));font-variant-numeric:tabular-nums}
+  .score .lbl{font-size:11px;color:var(--muted)}
+  .bars{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  @media(max-width:560px){.bars{grid-template-columns:repeat(2,1fr)}}
+  .bar{display:flex;flex-direction:column;gap:4px}
+  .bar .cap{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:6px}
+  .bar .cap b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .track{display:block;height:5px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+  .fill{display:block;height:100%;min-width:4px;background:linear-gradient(90deg,var(--gold),var(--accent));border-radius:3px}
+  .notes{grid-column:1/-1;font-size:14.5px;color:#E4CDD7;border-top:1px solid var(--line);padding-top:9px;white-space:pre-wrap;overflow-wrap:anywhere}
+  .row-actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-start}
+  .link{background:none;border:0;color:var(--muted);cursor:pointer;font-size:13.5px;padding:2px 0;text-decoration:underline;text-underline-offset:3px}
+  .link:hover{color:var(--accent)}
+  .empty{border:1px dashed var(--line);border-radius:var(--r);padding:26px 16px;text-align:center;color:var(--muted)}
+
+  /* ---------- stats ---------- */
+  .stats{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:16px}
+  .stats h2{font-family:var(--display);font-size:19px;margin:0 0 12px}
+  .stat-rows{display:flex;flex-direction:column;gap:11px}
+  .stat-row{display:grid;grid-template-columns:96px 1fr 42px;gap:10px;align-items:center;font-size:14px}
+  .stat-row .track{height:9px;border-radius:5px}
+  .stat-row .val{text-align:end;font-variant-numeric:tabular-nums;color:var(--gold);font-family:var(--display)}
+  .repeat-split{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+
+  /* ---------- backup ---------- */
+  details.backup{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+  details.backup summary{cursor:pointer;font-family:var(--display);font-size:17px}
+  details.backup .inner{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+  details.backup textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;min-height:90px;width:100%;font-size:13px;direction:ltr;text-align:left}
+  .danger{color:#FF8FA6}
+  .toast{
+    position:fixed;inset-inline:0;bottom:18px;margin:0 auto;width:max-content;max-width:90%;
+    background:var(--surface-2);border:1px solid var(--accent);color:var(--ink);
+    border-radius:999px;padding:9px 18px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5);
+    opacity:0;transform:translateY(8px);transition:opacity .18s,transform .18s;pointer-events:none;
+  }
+  .toast.on{opacity:1;transform:translateY(0)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+  footer.credit{color:#8E6C7D;font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="brand">
+    <h1>גט סקסי</h1>
+    <p class="sub">היומן הפרטי שלך לסטוצים. מדרגים כימיה, שיחה, נשיקות, מיטה והיחס אחרי — ורואים עם הזמן מה באמת עובד לך.</p>
+    <span class="privacy">הכל נשמר רק בדפדפן שלך. כדאי לכתוב כינוי, לא שם מלא.</span>
+  </header>
+
+  <section class="summary" id="summary" aria-label="סיכום"></section>
+
+  <div class="controls">
+    <input class="search" id="q" type="search" placeholder="חיפוש לפי כינוי, תגית או הערה" aria-label="חיפוש">
+    <div class="chips" id="genderFilter" role="group" aria-label="סינון">
+      <button class="chip" data-g="all" aria-pressed="true">הכל</button>
+      <button class="chip" data-g="f" aria-pressed="false">בחורות</button>
+      <button class="chip" data-g="m" aria-pressed="false">בחורים</button>
+      <button class="chip" data-g="x" aria-pressed="false">אחר</button>
+    </div>
+    <select class="sort" id="sort" aria-label="מיון">
+      <option value="new">הכי חדש</option>
+      <option value="high">ציון גבוה</option>
+      <option value="low">ציון נמוך</option>
+    </select>
+    <button class="btn" id="toggleForm">+ סטוץ חדש</button>
+  </div>
+
+  <section class="panel" id="formPanel" hidden>
+    <h2 id="formTitle">סטוץ חדש</h2>
+    <form id="entryForm">
+      <input type="hidden" id="editId">
+      <div class="grid">
+        <div class="field">
+          <label for="name">כינוי</label>
+          <input id="name" required maxlength="40" placeholder="למשל: ד׳ מטינדר">
+        </div>
+        <div class="field">
+          <label for="gender">מי זה היה</label>
+          <select id="gender">
+            <option value="f">בחורה</option>
+            <option value="m">בחור</option>
+            <option value="x">אחר</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="date">מתי</label>
+          <input id="date" type="date" required>
+        </div>
+        <div class="field">
+          <label for="place">איפה נפגשתם</label>
+          <input id="place" maxlength="30" placeholder="טינדר / בר / חברים / עבודה" list="places">
+          <datalist id="places">
+            <option value="טינדר"></option><option value="במבל"></option><option value="בר"></option>
+            <option value="מסיבה"></option><option value="דרך חברים"></option><option value="עבודה"></option>
+            <option value="חופשה"></option><option value="אקס"></option>
+          </datalist>
+        </div>
+      </div>
+
+      <div class="sliders" id="sliders"></div>
+
+      <div class="grid" style="margin-top:14px">
+        <div class="field">
+          <label for="repeat">עוד סיבוב?</label>
+          <select id="repeat">
+            <option value="yes">כן, בשמחה</option>
+            <option value="maybe">אולי</option>
+            <option value="no">לא</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tags">תגיות (מופרדות בפסיק)</label>
+          <input id="tags" maxlength="80" placeholder="ספונטני, אצלי, לילה ארוך">
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label for="notes">הערות — מה עשה את ההבדל</label>
+          <textarea id="notes" maxlength="600" placeholder="מה היה טוב, מה פחות, ומה כדאי לזכור לפעם הבאה"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn" type="submit" id="submitBtn">שמור</button>
+        <button class="btn ghost" type="button" id="cancelBtn">ביטול</button>
+        <span class="live">ציון כולל <b id="liveScore">—</b></span>
+      </div>
+    </form>
+  </section>
+
+  <div class="demo-note" id="demoNote" hidden>
+    <span><b>נתוני דוגמה.</b> שלוש רשומות להמחשה — לא שלך.</span>
+    <button class="btn ghost" id="clearDemo" style="padding:6px 13px;font-size:13.5px">מחק והתחל מאפס</button>
+  </div>
+
+  <section class="list" id="list" aria-live="polite"></section>
+
+  <section class="stats" id="stats" hidden>
+    <h2>מה עובד לך</h2>
+    <div class="stat-rows" id="statRows"></div>
+    <div class="repeat-split" id="repeatSplit"></div>
+  </section>
+
+  <details class="backup">
+    <summary>גיבוי ושחזור</summary>
+    <div class="inner">
+      <p style="margin:0;color:var(--muted);font-size:13.5px">הרשומות חיות רק בדפדפן הזה. ניקוי היסטוריית הגלישה ימחק אותן — העתק גיבוי ושמור אצלך.</p>
+      <div class="controls" style="gap:8px">
+        <button class="btn ghost" id="copyBackup">העתק גיבוי</button>
+        <button class="btn ghost" id="restoreBackup">שחזר מהטקסט למטה</button>
+        <button class="btn ghost danger" id="wipe">מחק הכל</button>
+      </div>
+      <textarea id="backupBox" spellcheck="false" placeholder='הדבק כאן גיבוי (JSON) ולחץ "שחזר"'></textarea>
+    </div>
+  </details>
+
+  <footer class="credit">גט סקסי · יומן פרטי · ללא שרתים, ללא חשבון, ללא שיתוף</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  "use strict";
+  document.documentElement.setAttribute("lang","he");
+  document.documentElement.setAttribute("dir","rtl");
+
+  var KEY = "getsexy.entries.v2";
+
+  var CATS = [
+    {id:"chem",  label:"כימיה",     hint:"המשיכה והניצוץ"},
+    {id:"talk",  label:"שיחה",      hint:"לפני, בין לבין ואחרי"},
+    {id:"kiss",  label:"נשיקות",    hint:"מגע, קצב, ידיים"},
+    {id:"bed",   label:"מיטה",      hint:"מה שקרה בפועל"},
+    {id:"after", label:"היחס אחרי", hint:"בבוקר ובהודעות"}
+  ];
+
+  var DEMO = [
+    {id:"d1", demo:true, name:"ד׳ מטינדר", gender:"f", date:"2026-08-29", place:"טינדר",
+     s:{chem:9,talk:7,kiss:9,bed:8,after:6}, repeat:"yes", tags:["ספונטני","אצלה"],
+     notes:"התחיל כקפה של חצי שעה ונגמר ב־2 בלילה. הכימיה הייתה מיידית, בבוקר קצת נעלמה."},
+    {id:"d2", demo:true, name:"הבחור מהבר", gender:"m", date:"2026-08-14", place:"בר",
+     s:{chem:7,talk:4,kiss:8,bed:7,after:3}, repeat:"maybe", tags:["לילה אחד"],
+     notes:"פיזית מצוין, שיחה אפס. לא ענה יומיים ואז שלח \"מה קורה\"."},
+    {id:"d3", demo:true, name:"מ׳ מהחתונה", gender:"x", date:"2026-07-02", place:"מסיבה",
+     s:{chem:8,talk:9,kiss:7,bed:6,after:9}, repeat:"yes", tags:["חברים משותפים","לילה ארוך"],
+     notes:"הכי כיף לדבר איתו/ה מכולם. במיטה היה בסדר, אבל הצחוק שווה חזרה."}
+  ];
+
+  var $ = function(s){ return document.querySelector(s); };
+  var entries = [];
+  var filter = {g:"all", q:"", sort:"new"};
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      if(raw){ var p = JSON.parse(raw); if(Array.isArray(p)) return p; }
+    }catch(e){}
+    return DEMO.slice();
+  }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(entries)); }
+    catch(e){ toast("לא הצלחתי לשמור בדפדפן — כדאי להעתיק גיבוי"); }
+  }
+  function avg(e){
+    var t = 0;
+    for(var i=0;i<CATS.length;i++) t += Number(e.s[CATS[i].id]) || 0;
+    return t / CATS.length;
+  }
+  function tier(v){
+    if(v >= 8.5) return "var(--accent)";
+    if(v >= 7)   return "var(--gold)";
+    if(v >= 5)   return "var(--muted)";
+    return "var(--cold)";
+  }
+  function fmt(v){ return v.toFixed(1); }
+  function hebDate(iso){
+    var d = new Date(iso + "T00:00:00");
+    if(isNaN(d)) return iso;
+    return d.toLocaleDateString("he-IL", {day:"numeric", month:"long", year:"numeric"});
+  }
+  var GENDER = {f:"בחורה", m:"בחור", x:"אחר"};
+  var REPEAT = {yes:{t:"עוד סיבוב: כן", c:"yes"}, maybe:{t:"עוד סיבוב: אולי", c:"maybe"}, no:{t:"עוד סיבוב: לא", c:"no"}};
+
+  var toastTimer;
+  function toast(msg){
+    var el = $("#toast");
+    el.textContent = msg;
+    el.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove("on"); }, 2600);
+  }
+
+  /* ---------- sliders ---------- */
+  function buildSliders(){
+    $("#sliders").innerHTML = CATS.map(function(c){
+      return '<div class="slider">' +
+        '<div class="top"><label for="s_'+c.id+'">'+c.label+'</label><b id="v_'+c.id+'">7</b></div>' +
+        '<input type="range" id="s_'+c.id+'" min="1" max="10" step="1" value="7">' +
+        '<span class="hint">'+c.hint+'</span>' +
+      '</div>';
+    }).join("");
+    CATS.forEach(function(c){
+      $("#s_"+c.id).addEventListener("input", function(){
+        $("#v_"+c.id).textContent = this.value;
+        liveScore();
+      });
+    });
+  }
+  function liveScore(){
+    var t = 0;
+    CATS.forEach(function(c){ t += Number($("#s_"+c.id).value); });
+    $("#liveScore").textContent = fmt(t / CATS.length);
+  }
+
+  /* ---------- render ---------- */
+  function visible(){
+    var q = filter.q.trim().toLowerCase();
+    var out = entries.filter(function(e){
+      if(filter.g !== "all" && e.gender !== filter.g) return false;
+      if(!q) return true;
+      var hay = (e.name + " " + (e.tags||[]).join(" ") + " " + (e.notes||"") + " " + (e.place||"")).toLowerCase();
+      return hay.indexOf(q) > -1;
+    });
+    out.sort(function(a,b){
+      if(filter.sort === "high") return avg(b) - avg(a);
+      if(filter.sort === "low")  return avg(a) - avg(b);
+      return (b.date || "").localeCompare(a.date || "");
+    });
+    return out;
+  }
+
+  function renderSummary(){
+    var n = entries.length;
+    var all = n ? entries.reduce(function(t,e){ return t + avg(e); }, 0) / n : 0;
+    var best = null;
+    entries.forEach(function(e){ if(!best || avg(e) > avg(best)) best = e; });
+    var yes = entries.filter(function(e){ return e.repeat === "yes"; }).length;
+    var pct = n ? Math.round(yes / n * 100) : 0;
+    $("#summary").innerHTML =
+      tile("רשומות", n) +
+      tile("ממוצע כללי", n ? fmt(all) + '<small> / 10</small>' : "—") +
+      tile("השיא", best ? esc(best.name) : "—", best ? 18 : 26) +
+      tile("שווה חזרה", n ? pct + '<small>%</small>' : "—");
+  }
+  function tile(k, v, size){
+    return '<div class="tile"><span class="k">'+k+'</span><span class="v"'+(size?' style="font-size:'+size+'px"':'')+'>'+v+'</span></div>';
+  }
+
+  function renderList(){
+    var items = visible();
+    var host = $("#list");
+    if(!items.length){
+      host.innerHTML = '<div class="empty">' + (entries.length
+        ? "אין רשומה שמתאימה לסינון הזה."
+        : "עוד אין כלום כאן. לחץ על «סטוץ חדש» כדי לדרג את הראשון.") + '</div>';
+      return;
+    }
+    host.innerHTML = items.map(function(e){
+      var a = avg(e), col = tier(a), rep = REPEAT[e.repeat] || REPEAT.maybe;
+      var meta = [
+        '<span class="tag">'+GENDER[e.gender]+'</span>',
+        '<span class="tag">'+esc(hebDate(e.date))+'</span>',
+        e.place ? '<span class="tag">'+esc(e.place)+'</span>' : "",
+        '<span class="tag rep '+rep.c+'">'+rep.t+'</span>'
+      ].concat((e.tags||[]).map(function(t){ return '<span class="tag">#'+esc(t)+'</span>'; })).join("");
+
+      var bars = CATS.map(function(c){
+        var v = Number(e.s[c.id]) || 0;
+        return '<div class="bar"><span class="cap">'+c.label+'<b>'+v+'</b></span>' +
+               '<span class="track"><span class="fill" style="width:'+(v*10)+'%"></span></span></div>';
+      }).join("");
+
+      return '<article class="entry" style="--tier:'+col+'">' +
+        '<div class="who"><h3 class="name">'+esc(e.name)+'</h3><div class="meta">'+meta+'</div></div>' +
+        '<div class="score"><div class="num">'+fmt(a)+'</div><div class="lbl">ציון כולל</div></div>' +
+        '<div class="bars">'+bars+'</div>' +
+        (e.notes ? '<p class="notes">'+esc(e.notes)+'</p>' : "") +
+        '<div class="row-actions">' +
+          '<button class="link" data-edit="'+e.id+'">עריכה</button>' +
+          '<button class="link" data-del="'+e.id+'">מחיקה</button>' +
+        '</div>' +
+      '</article>';
+    }).join("");
+  }
+
+  function renderStats(){
+    var box = $("#stats");
+    if(entries.length < 2){ box.hidden = true; return; }
+    box.hidden = false;
+    $("#statRows").innerHTML = CATS.map(function(c){
+      var v = entries.reduce(function(t,e){ return t + (Number(e.s[c.id])||0); }, 0) / entries.length;
+      return '<div class="stat-row"><span>'+c.label+'</span>' +
+        '<span class="track"><span class="fill" style="width:'+(v*10)+'%"></span></span>' +
+        '<span class="val">'+fmt(v)+'</span></div>';
+    }).join("");
+    var counts = {yes:0, maybe:0, no:0};
+    entries.forEach(function(e){ counts[e.repeat] = (counts[e.repeat]||0) + 1; });
+    $("#repeatSplit").innerHTML =
+      '<span class="tag yes">כן · '+counts.yes+'</span>' +
+      '<span class="tag maybe">אולי · '+counts.maybe+'</span>' +
+      '<span class="tag no">לא · '+counts.no+'</span>';
+  }
+
+  function render(){
+    $("#demoNote").hidden = !entries.some(function(e){ return e.demo; });
+    renderSummary();
+    renderList();
+    renderStats();
+  }
+
+  /* ---------- form ---------- */
+  function openForm(entry){
+    var p = $("#formPanel");
+    p.hidden = false;
+    $("#formTitle").textContent = entry ? "עריכת רשומה" : "סטוץ חדש";
+    $("#submitBtn").textContent = entry ? "עדכן" : "שמור";
+    $("#editId").value = entry ? entry.id : "";
+    $("#name").value = entry ? entry.name : "";
+    $("#gender").value = entry ? entry.gender : "f";
+    $("#date").value = entry ? entry.date : new Date().toISOString().slice(0,10);
+    $("#place").value = entry ? (entry.place||"") : "";
+    $("#repeat").value = entry ? entry.repeat : "maybe";
+    $("#tags").value = entry ? (entry.tags||[]).join(", ") : "";
+    $("#notes").value = entry ? (entry.notes||"") : "";
+    CATS.forEach(function(c){
+      var v = entry ? (entry.s[c.id] || 7) : 7;
+      $("#s_"+c.id).value = v;
+      $("#v_"+c.id).textContent = v;
+    });
+    liveScore();
+    p.scrollIntoView({behavior:"smooth", block:"start"});
+    $("#name").focus();
+  }
+  function closeForm(){
+    $("#formPanel").hidden = true;
+    $("#entryForm").reset();
+    $("#editId").value = "";
+  }
+
+  $("#entryForm").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    var s = {};
+    CATS.forEach(function(c){ s[c.id] = Number($("#s_"+c.id).value); });
+    var data = {
+      name: $("#name").value.trim(),
+      gender: $("#gender").value,
+      date: $("#date").value,
+      place: $("#place").value.trim(),
+      repeat: $("#repeat").value,
+      tags: $("#tags").value.split(",").map(function(t){ return t.trim(); }).filter(Boolean).slice(0,8),
+      notes: $("#notes").value.trim(),
+      s: s
+    };
+    var id = $("#editId").value;
+    if(id){
+      for(var i=0;i<entries.length;i++){
+        if(entries[i].id === id){
+          data.id = id;
+          entries[i] = data;
+          break;
+        }
+      }
+      toast("הרשומה עודכנה");
+    }else{
+      data.id = "e" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+      entries.unshift(data);
+      toast("נשמר · ציון " + fmt(avg(data)));
+    }
+    save(); render(); closeForm();
+  });
+
+  $("#cancelBtn").addEventListener("click", closeForm);
+  $("#toggleForm").addEventListener("click", function(){
+    if($("#formPanel").hidden) openForm(null); else closeForm();
+  });
+
+  $("#list").addEventListener("click", function(ev){
+    var ed = ev.target.getAttribute && ev.target.getAttribute("data-edit");
+    var dl = ev.target.getAttribute && ev.target.getAttribute("data-del");
+    if(ed){
+      var found = entries.filter(function(e){ return e.id === ed; })[0];
+      if(found) openForm(found);
+    }
+    if(dl){
+      var one = entries.filter(function(e){ return e.id === dl; })[0];
+      if(one && confirm('למחוק את "' + one.name + '"? אי אפשר לשחזר.')){
+        entries = entries.filter(function(e){ return e.id !== dl; });
+        save(); render(); toast("נמחק");
+      }
+    }
+  });
+
+  $("#q").addEventListener("input", function(){ filter.q = this.value; renderList(); });
+  $("#sort").addEventListener("change", function(){ filter.sort = this.value; renderList(); });
+  $("#genderFilter").addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-g]");
+    if(!b) return;
+    filter.g = b.getAttribute("data-g");
+    Array.prototype.forEach.call(this.querySelectorAll(".chip"), function(c){
+      c.setAttribute("aria-pressed", String(c === b));
+    });
+    renderList();
+  });
+
+  $("#clearDemo").addEventListener("click", function(){
+    entries = entries.filter(function(e){ return !e.demo; });
+    save(); render(); toast("הדוגמאות נמחקו");
+  });
+
+  $("#copyBackup").addEventListener("click", function(){
+    var json = JSON.stringify(entries, null, 2);
+    $("#backupBox").value = json;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(json).then(
+        function(){ toast("הגיבוי הועתק"); },
+        function(){ toast("הגיבוי מוצג למטה — סמן והעתק"); }
+      );
+    }else{
+      toast("הגיבוי מוצג למטה — סמן והעתק");
+    }
+  });
+
+  $("#restoreBackup").addEventListener("click", function(){
+    var txt = $("#backupBox").value.trim();
+    if(!txt){ toast("הדבק קודם גיבוי בתיבה"); return; }
+    var parsed;
+    try{ parsed = JSON.parse(txt); }catch(e){ toast("הטקסט אינו גיבוי תקין"); return; }
+    if(!Array.isArray(parsed)){ toast("הטקסט אינו גיבוי תקין"); return; }
+    var clean = parsed.filter(function(e){ return e && e.name && e.s; });
+    if(!clean.length){ toast("לא נמצאו רשומות בגיבוי"); return; }
+    if(!confirm("לשחזר " + clean.length + " רשומות במקום מה שקיים עכשיו?")) return;
+    entries = clean.map(function(e, i){
+      return {
+        id: e.id || ("r" + Date.now().toString(36) + i),
+        name: String(e.name).slice(0,40),
+        gender: GENDER[e.gender] ? e.gender : "x",
+        date: e.date || new Date().toISOString().slice(0,10),
+        place: e.place || "",
+        repeat: REPEAT[e.repeat] ? e.repeat : "maybe",
+        tags: Array.isArray(e.tags) ? e.tags.slice(0,8) : [],
+        notes: e.notes || "",
+        demo: !!e.demo,
+        s: CATS.reduce(function(o,c){
+          var v = Number(e.s[c.id]);
+          o[c.id] = (v >= 1 && v <= 10) ? Math.round(v) : 5;
+          return o;
+        }, {})
+      };
+    });
+    save(); render(); toast("שוחזרו " + entries.length + " רשומות");
+  });
+
+  $("#wipe").addEventListener("click", function(){
+    if(!confirm("למחוק את כל הרשומות? כדאי להעתיק גיבוי קודם.")) return;
+    entries = [];
+    save(); render(); toast("הכל נמחק");
+  });
+
+  buildSliders();
+  entries = load();
+  render();
+})();
+</script>
+</body>
+</html>
