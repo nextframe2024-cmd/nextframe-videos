@@ -114,5 +114,6 @@ Cloud API עצמו עובד מעל HTTPS/TLS, והצפנה של data at rest.
 
 ---
 
-מקור: דף ה-overview הרשמי של WhatsApp Business Platform בתיעוד המפתחים של
-Meta. תאריך עדכון הדף: 4 באוגוסט 2026.
+מקור:
+<https://developers.facebook.com/documentation/business-messaging/whatsapp/about-the-platform>
+תאריך עדכון הדף: 4 באוגוסט 2026.
