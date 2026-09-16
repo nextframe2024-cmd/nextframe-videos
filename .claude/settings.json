@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "mcp__whatsapp_business_tools__whatsapp_biz_delete_template",
+      "mcp__whatsapp_business_tools__whatsapp_biz_configure_payments"
+    ],
+    "ask": [
+      "mcp__whatsapp_business_tools__whatsapp_biz_send_message",
+      "mcp__whatsapp_business_tools__whatsapp_biz_register_phone_number"
+    ]
+  }
+}

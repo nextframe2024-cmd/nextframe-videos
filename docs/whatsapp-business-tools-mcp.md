@@ -81,7 +81,9 @@ claude mcp add --transport http whatsapp_business_tools \
 
 ## הכלים
 
-### קריאה וגילוי
+**18 כלים** בסך הכל: 6 קריאה, 11 כתיבה, ואחד ששייך לשניהם.
+
+### קריאה וגילוי (6)
 
 | כלי | תפקיד |
 |---|---|
@@ -90,8 +92,9 @@ claude mcp add --transport http whatsapp_business_tools \
 | `whatsapp_biz_phone_numbers` | מספרי הטלפון של עסק או חשבון, עם סטטוס ומצב onboarding |
 | `whatsapp_biz_list_templates` | רשימת תבניות ההודעות בחשבון |
 | `whatsapp_biz_get_template` | פרטי תבנית בודדת |
+| `whatsapp_biz_system_user_token` | מחזיר **קישור** ליצירת system user access token, לבנייה של פתרון שקורא ל-Cloud API ישירות. לא מייצר טוקן בעצמו. |
 
-### כתיבה — מספרי טלפון
+### כתיבה — מספרי טלפון (4)
 
 | כלי | תפקיד |
 |---|---|
@@ -100,7 +103,7 @@ claude mcp add --transport http whatsapp_business_tools \
 | `whatsapp_biz_verify_phone_number` | אימות המספר עם הקוד שהתקבל |
 | `whatsapp_biz_register_phone_number` | רישום מספר מאומת כדי שיוכל לשלוח ולקבל |
 
-### כתיבה — תבניות
+### כתיבה — תבניות (3)
 
 | כלי | תפקיד |
 |---|---|
@@ -108,7 +111,7 @@ claude mcp add --transport http whatsapp_business_tools \
 | `whatsapp_biz_update_template` | עדכון תבנית |
 | `whatsapp_biz_delete_template` | **מחיקת** תבנית |
 
-### כתיבה — הודעות, webhooks וחשבון
+### כתיבה — הודעות ו-webhooks (4)
 
 | כלי | תפקיד |
 |---|---|
@@ -116,24 +119,60 @@ claude mcp add --transport http whatsapp_business_tools \
 | `whatsapp_biz_configure_webhooks` | הגדרת callback URL ו-verify token ל-topic של WhatsApp, והרשמה לשדות המותרים |
 | `whatsapp_biz_subscribe_webhook` | רישום חשבון WhatsApp ל-webhooks של האפליקציה שלך |
 | `whatsapp_biz_configure_payments` | הגדרת אמצעי תשלום כדי שהחשבון יוכל לשלוח הודעות בתשלום |
-| `whatsapp_biz_verify_business` | בדיקה והתחלה של אימות עסק |
-| `whatsapp_biz_system_user_token` | קישור ליצירת system user access token, לבנייה של פתרון שקורא ל-Cloud API ישירות |
+
+### קריאה וכתיבה (1)
+
+| כלי | תפקיד |
+|---|---|
+| `whatsapp_biz_verify_business` | בודק את סטטוס אימות העסק **וגם** מתחיל אימות — כלומר לא כלי קריאה בלבד |
 
 ## אזהרת הרשאות ומגבלות
 
 זה **לא** כלי לקריאה בלבד. השרת פועל בשמך על כל עסק ואפליקציה שאישרת בהסכמה,
 והוא שולח הודעות, רושם מספרים, מוחק תבניות ומגדיר אמצעי תשלום. המלצות:
 
-- **הגבל בהסכמה.** מסך ההסכמה נותן לבחור אילו עסקים ואפליקציות נחשפים — זה
-  הבלם היעיל ביותר. בחר רק את מה שנדרש.
+- **הגבל בהסכמה.** מסך ההסכמה קובע לאילו עסקים ואפליקציות יש גישה. בחר רק
+  את מה שנדרש.
+- **הגבל גם בצד הלקוח.** ההסכמה קובעת *היקף*, אבל לא *אילו כלים* מותרים —
+  לזה יש `.claude/settings.json`. ראה למטה.
 - **התחל מול משאבי הבדיקה.** כשמתחילים עם Cloud API נוצרים אוטומטית WABA
   ומספר טלפון של בדיקה, עם messaging limits מרוככים וללא צורך ב-payment
   method לשליחת תבניות.
 - `whatsapp_biz_send_message` מאשר את היעד לפני שליחה, אבל
   `whatsapp_biz_delete_template` ו-`whatsapp_biz_configure_payments` — לא
-  מתועד שכן. התייחס אליהם בזהירות.
+  מתועד שכן. לכן הם חסומים בקונפיגורציה, ראה למטה.
 - אין צורך לשמור טוקן עבור ה-MCP — האימות הוא OAuth. `.env.example` ברפו הוא
   לעבודה ישירה מול Cloud API, לא לשרת.
+
+### חסימת כלים ב-Claude Code
+
+מסך ההסכמה של Meta לא מבחין בין כלים, ולכן ההגבלה לפי כלי נעשית אצלנו.
+[`.claude/settings.json`](../.claude/settings.json) ברפו הזה מגדיר:
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "mcp__whatsapp_business_tools__whatsapp_biz_delete_template",
+      "mcp__whatsapp_business_tools__whatsapp_biz_configure_payments"
+    ],
+    "ask": [
+      "mcp__whatsapp_business_tools__whatsapp_biz_send_message",
+      "mcp__whatsapp_business_tools__whatsapp_biz_register_phone_number"
+    ]
+  }
+}
+```
+
+- `deny` — שני הכלים שלא מתועד שהם מבקשים אישור עצמאי, ושהתוצאה שלהם הרסנית
+  או כספית.
+- `ask` — דורש אישור מפורש לפני פעולה שנראית כלפי חוץ.
+
+**מה עדיין רץ בלי אישור:** שאר 7 כלי הכתיבה —
+`add_phone_number`, `send_verification_code`, `verify_phone_number`,
+`create_template`, `update_template`, `configure_webhooks`,
+`subscribe_webhook` — וגם `whatsapp_biz_verify_business`, שמתחיל אימות ולא
+רק בודק. אם תרצה הידוק נוסף, הוסף אותם ל-`ask`.
 
 ### Rate limits
 
