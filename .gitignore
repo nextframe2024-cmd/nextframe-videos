@@ -1,0 +1,11 @@
+# Secrets — never commit
+.env
+.env.local
+*.token
+
+# Local MCP overrides (may contain tokens)
+.mcp.local.json
+.claude/settings.local.json
+
+# Node
+node_modules/
