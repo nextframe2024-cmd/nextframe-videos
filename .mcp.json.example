@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "whatsapp-business-tools": {
-      "type": "http",
-      "url": "<PASTE THE SERVER URL FROM META'S DOCS HERE>"
-    }
-  }
-}
