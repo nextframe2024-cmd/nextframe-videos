@@ -1,0 +1,17 @@
+name = "whatsapp-webhook-receiver"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# Dedupe store. Create with:
+#   wrangler kv namespace create SEEN
+# then paste the returned id below and uncomment. Without it the receiver
+# still works, but a Meta retry can write a lead twice.
+# [[kv_namespaces]]
+# binding = "SEEN"
+# id = "<kv-namespace-id>"
+
+# Secrets are set with `wrangler secret put`, never committed:
+#   VERIFY_TOKEN       any string you also paste into Meta's webhook config
+#   APP_SECRET         App Dashboard > Settings > Basic > App Secret
+#   SHEETS_WEBAPP_URL  the Apps Script web app /exec URL
+#   SHEETS_TOKEN       the shared secret inside the Apps Script
