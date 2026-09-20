@@ -112,7 +112,7 @@ test('appends a lead in the sheet column order', () => {
     leads: [lead('wamid.A', 'מחפש הצעה')],
   });
 
-  assert.deepEqual(result, { ok: true, appended: 1, skipped: 0 });
+  assert.deepEqual(result, { ok: true, appended: 1, skipped: 0, received: 1 });
   assert.equal(sheet.rows.length, 2);
 
   const row = sheet.rows[1];
@@ -127,8 +127,8 @@ test('a retried delivery appends nothing', () => {
   const doPost = load(sheet, { token: 'right' });
   const body = { token: 'right', leads: [lead('wamid.A', 'hi')] };
 
-  assert.deepEqual(post(doPost, body), { ok: true, appended: 1, skipped: 0 });
-  assert.deepEqual(post(doPost, body), { ok: true, appended: 0, skipped: 1 });
+  assert.deepEqual(post(doPost, body), { ok: true, appended: 1, skipped: 0, received: 1 });
+  assert.deepEqual(post(doPost, body), { ok: true, appended: 0, skipped: 1, received: 1 });
   assert.equal(sheet.rows.length, 2);
 });
 
@@ -142,7 +142,7 @@ test('appends only the unseen leads of a partly retried batch', () => {
     leads: [lead('wamid.A', 'first'), lead('wamid.B', 'second')],
   });
 
-  assert.deepEqual(result, { ok: true, appended: 1, skipped: 1 });
+  assert.deepEqual(result, { ok: true, appended: 1, skipped: 1, received: 2 });
   assert.equal(sheet.rows.length, 3);
 });
 
@@ -162,7 +162,7 @@ test('an empty batch is a success with nothing appended', () => {
   const sheet = fakeSheet([HEADERS.slice()]);
   const result = post(load(sheet, { token: 'right' }), { token: 'right', leads: [] });
 
-  assert.deepEqual(result, { ok: true, appended: 0, skipped: 0 });
+  assert.deepEqual(result, { ok: true, appended: 0, skipped: 0, received: 0 });
   assert.equal(sheet.rows.length, 1);
 });
 
@@ -173,4 +173,20 @@ test('accepts the messages and message aliases', () => {
   assert.equal(post(doPost, { token: 'right', messages: [lead('wamid.A', 'a')] }).appended, 1);
   assert.equal(post(doPost, { token: 'right', message: lead('wamid.B', 'b') }).appended, 1);
   assert.equal(sheet.rows.length, 3);
+});
+
+test('dedupes after the key column is physically moved', () => {
+  // A silently wrong dedupe — comparing ids against received_at — is worse
+  // than none, so the column is located by header on every request.
+  const moved = ['wa_message_id', 'received_at', 'from', 'text', 'status', 'notes'];
+  const sheet = fakeSheet([moved]);
+  const doPost = load(sheet, { token: 'right' });
+  const body = { token: 'right', leads: [lead('wamid.A', 'hi')] };
+
+  assert.equal(post(doPost, body).appended, 1);
+  assert.equal(sheet.rows[1][0], 'wamid.A'); // Column A now holds the key.
+
+  const retry = post(doPost, body);
+  assert.deepEqual(retry, { ok: true, appended: 0, skipped: 1, received: 1 });
+  assert.equal(sheet.rows.length, 2);
 });

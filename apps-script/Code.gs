@@ -62,7 +62,9 @@ function doPost(e) {
   if (batch.error) return jsonOut({ ok: false, error: batch.error });
 
   var leads = batch.leads;
-  if (leads.length === 0) return jsonOut({ ok: true, appended: 0, skipped: 0 });
+  if (leads.length === 0) {
+    return jsonOut({ ok: true, appended: 0, skipped: 0, received: 0 });
+  }
 
   // Covers the read and the write together: two deliveries arriving at once
   // would otherwise both compute the same target row.
@@ -85,12 +87,17 @@ function doPost(e) {
       fresh = filterFresh_(leads, existingIds_(sheet, idColumn));
     } else {
       // Dedupe is a safety net, not a gate: still write, but say it is off.
-      warning = 'no wa_message_id column, retries may duplicate rows';
+      warning = 'no wa_message_id column in header row — dedupe disabled';
     }
 
     var skipped = leads.length - fresh.length;
     if (fresh.length === 0) {
-      return jsonOut({ ok: true, appended: 0, skipped: skipped });
+      return jsonOut({
+        ok: true,
+        appended: 0,
+        skipped: skipped,
+        received: leads.length,
+      });
     }
 
     var rows = mapRows_(fresh, headers);
@@ -100,7 +107,12 @@ function doPost(e) {
       .getRange(sheet.getLastRow() + 1, 1, rows.length, headers.length)
       .setValues(rows);
 
-    var result = { ok: true, appended: rows.length, skipped: skipped };
+    var result = {
+      ok: true,
+      appended: rows.length,
+      skipped: skipped,
+      received: leads.length,
+    };
     if (warning) result.warning = warning;
     return jsonOut(result);
   } catch (err) {
