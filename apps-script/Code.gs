@@ -20,6 +20,27 @@ var SPREADSHEET_ID = '1G3GFq0xzWbyKB2yA1MPD4bAl8WDhQjI3BDUCysBfdZE';
 // shared secret is what actually keeps strangers from writing to the sheet.
 var TOKEN = 'REPLACE_WITH_A_LONG_RANDOM_STRING';
 
+/**
+ * The wa_message_ids already in the sheet.
+ *
+ * The Worker only marks a lead written once this script answers ok, so any
+ * failure after the rows commit — a timeout, a dropped response — leaves Meta
+ * retrying a batch that is already in the sheet. Reading the id column before
+ * writing is what makes a retry idempotent.
+ */
+function existingIds_(sheet, idColumn) {
+  var seen = {};
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return seen; // Header only.
+
+  var values = sheet.getRange(2, idColumn, lastRow - 1, 1).getValues();
+  for (var i = 0; i < values.length; i++) {
+    var id = values[i][0];
+    if (id) seen[String(id)] = true;
+  }
+  return seen;
+}
+
 function jsonOut(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
     ContentService.MimeType.JSON
@@ -73,18 +94,42 @@ function doPost(e) {
     var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    var rows = leads.map(function (lead) {
+    // Header names are read per request, so reordering or adding columns in
+    // the sheet needs no redeployment.
+    var idColumn = headers.indexOf('wa_message_id') + 1;
+    var fresh = leads;
+    var warning;
+
+    if (idColumn > 0) {
+      var seen = existingIds_(sheet, idColumn);
+      fresh = leads.filter(function (lead) {
+        return !seen[String(lead.wa_message_id)];
+      });
+    } else {
+      // Dedupe is a safety net, not a gate: still write, but say it is off.
+      warning = 'no wa_message_id column, retries may duplicate rows';
+    }
+
+    var skipped = leads.length - fresh.length;
+    if (fresh.length === 0) {
+      return jsonOut({ ok: true, appended: 0, skipped: skipped });
+    }
+
+    var rows = fresh.map(function (lead) {
       return headers.map(function (header) {
         var value = lead[header];
         return value === undefined || value === null ? '' : value;
       });
     });
 
+    // One setValues for the whole batch, so a batch cannot land half written.
     sheet
       .getRange(sheet.getLastRow() + 1, 1, rows.length, headers.length)
       .setValues(rows);
 
-    return jsonOut({ ok: true, appended: rows.length });
+    var result = { ok: true, appended: rows.length, skipped: skipped };
+    if (warning) result.warning = warning;
+    return jsonOut(result);
   } catch (err) {
     return jsonOut({ ok: false, error: String(err) });
   } finally {
