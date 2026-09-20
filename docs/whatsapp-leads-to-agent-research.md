@@ -93,7 +93,40 @@ Cloud API שולח **גם הודעות אמיתיות וגם עדכוני סטט
 
 בהיקף של פחות מ-10 לידים ביום זה נכנס בשכבות החינמיות בשופי.
 
-## 5. המסקנה לתיק שלנו
+## 5. מספר הבדיקה — מה הוא מאפשר ומה לא
+
+נוצר חינם עם כל אפליקציית Cloud API, בפורמט של מספר אמריקאי. שליחת תבניות
+ממנו לא דורשת אמצעי תשלום.
+
+**מה מותר:** עד **5 מספרים מאושרים**, שמתווספים ומאומתים במסך API Setup. יש
+להתייחס לרשימה כאל allowlist של מספרים פנימיים ומסכימים — לא מספרי לקוחות.
+
+**מה אסור:** לקוחות מזדמנים **לא יכולים** לשלוח הודעה למספר הבדיקה.
+
+**מה שחשוב לנו:** חמשת המקבלים **כן יכולים להשיב**, והתשובה מפעילה webhook
+נכנס. תשובה של מי מהם פותחת גם את חלון 24 השעות, כך שאפשר לבדוק טקסט חופשי
+ולא רק תבניות. אפשר גם לשלוח payload בדיקה ידנית מ-
+`App Dashboard > WhatsApp > Configuration`.
+
+כלומר הצינור המלא — הודעה נכנסת, webhook, כתיבה לטבלה — ניתן לאימות מקצה
+לקצה על מספר הבדיקה, עם הטלפון האישי כאחד מחמשת המקבלים. בלי לגעת במספר
+העסקי ובלי להוציא מספר חדש.
+
+לכשיעלה לייצור: 1,000 השיחות הראשונות בכל חודש חינם.
+
+## 6. מספרים וירטואליים מהאינטרנט — לא מסלול
+
+WhatsApp חוסמת רישום של מספרי **VoIP, קווי נייח, toll-free, פרימיום, UAN
+ומספרי shared cost**. מ-2024 נחסמה הפעלה של מספרי VoIP מאוחסנים בארה"ב,
+ומספרים וירטואליים מסוננים בשלב האימות.
+
+הסיבה: מספרים כאלה ניתנים לייצור בכמויות, בלי SIM פיזי ובלי זיהוי, והיו כלי
+נפוץ ליצירת חשבונות מזויפים ולספאם.
+
+מעבר לחסימה — מספר מאתר SMS ציבורי הוא **משותף**, וכל מי שנכנס לאותו אתר יכול
+להשתלט על החשבון. לא להשתמש בזה לשום דבר אמיתי.
+
+## 7. המסקנה לתיק שלנו
 
 | רכיב | מצב |
 |---|---|
@@ -118,5 +151,9 @@ Cloud API שולח **גם הודעות אמיתיות וגם עדכוני סטט
 - [YCloud — What is WhatsApp Business App Coexistence](https://www.ycloud.com/blog/whatsapp-business-app-coexistence-meta-update)
 - [Blueticks — WhatsApp API to read messages and chat history](https://blueticks.co/blog/whatsapp-api-read-messages-and-chats)
 - [n8n — Qualify, log and route inbound WhatsApp leads with Google Sheets](https://n8n.io/workflows/16923-qualify-log-and-route-inbound-whatsapp-leads-with-openai-and-google-sheets)
+- [WANotifier — Test phone number limitations in direct setup](https://help.wanotifier.com/en/article/test-phone-number-limitations-in-direct-setup-kt0ly2/)
+- [Wati — Test WhatsApp sends without messaging real customers](https://www.wati.io/en/blog/test-whatsapp-message-sends-safely/)
+- [Cape — Can I use a VoIP number for WhatsApp in 2026](https://www.cape.co/blog/can-i-use-a-voip-number-for-whatsapp)
+- [WhatsApp Help Center — Can't complete registration](https://faq.whatsapp.com/1120385166078156)
 - [Cloudflare Worker template for WhatsApp Cloud API](https://github.com/depombo/whatsapp-api-cf-worker)
 - [n8n community — filtering Cloud API status webhooks with a Worker](https://community.n8n.io/t/how-to-stop-whatsapp-cloud-api-status-webhooks-from-eating-your-n8n-executions-using-a-cloudflare-worker-for-generic-webhook-node-users/294956)
