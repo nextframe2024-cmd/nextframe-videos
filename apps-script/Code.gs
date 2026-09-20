@@ -2,49 +2,45 @@
  * Appends WhatsApp leads to the sheet.
  *
  * Deployed as a web app; the Cloudflare Worker POSTs batches of leads to its
- * /exec URL. Rows are mapped by header name, so reordering or adding columns
- * in the sheet needs no change here.
+ * /exec URL. The pure parts live in logic.gs, which the test suite covers.
  *
  * Setup:
- *   1. Replace TOKEN with a long random string.
- *   2. Deploy > New deployment > Web app.
+ *   1. Add both logic.gs and this file to the Apps Script project.
+ *   2. Replace TOKEN with a long random string (`openssl rand -hex 32`).
+ *   3. Deploy > New deployment > Web app.
  *        Execute as: Me
  *        Who has access: Anyone
- *   3. Give the /exec URL to the Worker as SHEETS_WEBAPP_URL, and the same
+ *   4. Give the /exec URL to the Worker as SHEETS_WEBAPP_URL, and the same
  *      TOKEN as SHEETS_TOKEN.
+ *
+ * Apps Script serves a snapshot, so any change here needs a NEW deployment.
+ * Sheet headers do not: they are read on every request.
  */
 
 var SPREADSHEET_ID = '1G3GFq0xzWbyKB2yA1MPD4bAl8WDhQjI3BDUCysBfdZE';
 
 // A web app set to "Anyone" is reachable by anyone who learns the URL, so this
-// shared secret is what actually keeps strangers from writing to the sheet.
+// shared secret is what actually keeps strangers out of the sheet.
 var TOKEN = 'REPLACE_WITH_A_LONG_RANDOM_STRING';
+
+function jsonOut(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON
+  );
+}
 
 /**
  * The wa_message_ids already in the sheet.
  *
  * The Worker only marks a lead written once this script answers ok, so any
  * failure after the rows commit — a timeout, a dropped response — leaves Meta
- * retrying a batch that is already in the sheet. Reading the id column before
- * writing is what makes a retry idempotent.
+ * retrying a batch that is already here. Reading the id column before writing
+ * is what makes that retry idempotent.
  */
 function existingIds_(sheet, idColumn) {
-  var seen = {};
   var lastRow = sheet.getLastRow();
-  if (lastRow < 2) return seen; // Header only.
-
-  var values = sheet.getRange(2, idColumn, lastRow - 1, 1).getValues();
-  for (var i = 0; i < values.length; i++) {
-    var id = values[i][0];
-    if (id) seen[String(id)] = true;
-  }
-  return seen;
-}
-
-function jsonOut(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
-    ContentService.MimeType.JSON
-  );
+  if (lastRow < 2) return {}; // Header only.
+  return idLookup_(sheet.getRange(2, idColumn, lastRow - 1, 1).getValues());
 }
 
 function doPost(e) {
@@ -56,33 +52,20 @@ function doPost(e) {
   }
 
   if (!TOKEN || TOKEN === 'REPLACE_WITH_A_LONG_RANDOM_STRING') {
-    return jsonOut({ ok: false, error: 'token not configured' });
+    return jsonOut({ ok: false, error: 'token_not_configured' });
   }
   if (payload.token !== TOKEN) {
     return jsonOut({ ok: false, error: 'unauthorized' });
   }
 
-  // Accepts `leads` or `messages` for a batch, or a single `message` object.
-  // A payload carrying none of these is a contract mismatch, not an empty
-  // batch: reporting ok here would let the Worker mark the lead written and
-  // drop it, so it has to be an error.
-  var leads;
-  if (Array.isArray(payload.leads)) {
-    leads = payload.leads;
-  } else if (Array.isArray(payload.messages)) {
-    leads = payload.messages;
-  } else if (payload.message && typeof payload.message === 'object') {
-    leads = [payload.message];
-  } else {
-    return jsonOut({ ok: false, error: 'no leads, messages or message in payload' });
-  }
+  var batch = selectBatch_(payload);
+  if (batch.error) return jsonOut({ ok: false, error: batch.error });
 
-  if (leads.length === 0) {
-    return jsonOut({ ok: true, appended: 0 });
-  }
+  var leads = batch.leads;
+  if (leads.length === 0) return jsonOut({ ok: true, appended: 0, skipped: 0 });
 
-  // Two deliveries arriving together would otherwise compute the same target
-  // row and overwrite each other.
+  // Covers the read and the write together: two deliveries arriving at once
+  // would otherwise both compute the same target row.
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(30000);
@@ -94,17 +77,12 @@ function doPost(e) {
     var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheets()[0];
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    // Header names are read per request, so reordering or adding columns in
-    // the sheet needs no redeployment.
-    var idColumn = headers.indexOf('wa_message_id') + 1;
+    var idColumn = findIdColumn_(headers);
     var fresh = leads;
     var warning;
 
     if (idColumn > 0) {
-      var seen = existingIds_(sheet, idColumn);
-      fresh = leads.filter(function (lead) {
-        return !seen[String(lead.wa_message_id)];
-      });
+      fresh = filterFresh_(leads, existingIds_(sheet, idColumn));
     } else {
       // Dedupe is a safety net, not a gate: still write, but say it is off.
       warning = 'no wa_message_id column, retries may duplicate rows';
@@ -115,12 +93,7 @@ function doPost(e) {
       return jsonOut({ ok: true, appended: 0, skipped: skipped });
     }
 
-    var rows = fresh.map(function (lead) {
-      return headers.map(function (header) {
-        var value = lead[header];
-        return value === undefined || value === null ? '' : value;
-      });
-    });
+    var rows = mapRows_(fresh, headers);
 
     // One setValues for the whole batch, so a batch cannot land half written.
     sheet
