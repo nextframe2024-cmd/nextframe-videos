@@ -36,15 +36,33 @@
 | אימות עסק בבדיקה (תקרת 250 שיחות ביוזמת העסק) | ❌ |
 | אין אמצעי תשלום | ❌ נכנסות לא נחסמות |
 
-## אל תוסיף WhatsApp ל-`Ads Reporting`
+## למה אפליקציה נפרדת — הנימוק המחייב
 
-ה-rate limit של 200 בקשות/שעה הוא **per app per WABA**. דוחות מודעות וקבלת
-לידים יתחלקו באותה מכסה, ואם האפליקציה תוגבל מסיבה שקשורה למודעות — הווצאפ
-נופל איתה. צריך use case נפרד בכל מקרה.
+**Meta לא מאפשרת את השילוב בכלל.** ברגע שמסמנים use case של WhatsApp,
+`Facebook Login` ו-`Instant Game` הופכים אפורים עם ההודעה:
 
-**אפליקציה חדשה** עם WhatsApp Business Messaging. blast radius מבודד.
+> Some use cases can't be combined on the same app.
 
-*(נרשם כדי שההחלטה הזו לא תיבחן מחדש בעוד חודשיים.)*
+כלומר להוסיף WhatsApp ל-`Ads Reporting` — אפליקציית Facebook Login for
+Business — לא היה אפשרי מלכתחילה. הדיון היה מיותר.
+
+נימוק משני שנשאר נכון אבל לא הכריע: ה-rate limit של 200 בקשות/שעה הוא
+**per app per WABA**, כך שדוחות מודעות וקבלת לידים היו מתחלקים באותה מכסה.
+
+*(נרשם כדי שההחלטה לא תיבחן מחדש בעוד חודשיים.)*
+
+## האפליקציה החדשה
+
+| | |
+|---|---|
+| שם | `NEXT FRAME Leads Receiver` |
+| Use case | Connect with customers through WhatsApp |
+| עסק | NEXT FRAME |
+| דוא"ל | nextframe2024@gmail.com |
+
+**Meta חוסמת את המילה "whatsapp" בשמות אפליקציות.** לכן השם לא מזכיר אותה.
+
+`APP_SECRET` נמצא ב-`App settings > Basic` אחרי היצירה.
 
 ## Coexistence — לא אושר
 
