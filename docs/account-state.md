@@ -56,15 +56,49 @@ Business — לא היה אפשרי מלכתחילה. הדיון היה מיות
 | | |
 |---|---|
 | שם | `NEXT FRAME Leads Receiver` |
+| App ID | `39087607710830380` |
 | Use case | Connect with customers through WhatsApp |
 | עסק | NEXT FRAME |
+| מצב | **Unpublished** — ראה החסם שנשאר |
 | דוא"ל | nextframe2024@gmail.com |
 
 **Meta חוסמת את המילה "whatsapp" בשמות אפליקציות.** לכן השם לא מזכיר אותה.
 
 `APP_SECRET` נמצא ב-`App settings > Basic` אחרי היצירה.
 
-## Coexistence — לא אושר
+## Coexistence — מאומת ✅
+
+`is_on_biz_app: true`. המספר נמצא גם באפליקציית WhatsApp Business וגם מחובר
+ל-Cloud API.
+
+**המשמעות:** החסם שדרש BSP או מעמד Tech Provider **עקוף** — הוא כבר פעיל.
+אפשר לחבר webhook לתנועה האמיתית, לא רק למספר בדיקה, והצוות ממשיך לענות
+באפליקציה כרגיל.
+
+## החסם שנשאר — פרסום האפליקציה
+
+מתוך מסך ה-Webhooks:
+
+> Apps will only be able to receive test webhooks sent from the app dashboard
+> while the app is unpublished. No production data, including from app admins,
+> developers or testers, will be delivered unless the app has been published.
+
+כלומר Coexistence פעיל והתנועה קיימת, אבל היא **לא תגיע ל-webhook עד שהאפליקציה
+תפורסם**. פרסום דורש אימות עסק — אותו אימות שנמצא בבדיקה.
+
+| מה עובד לפני פרסום | מה לא |
+|---|---|
+| הגדרת Callback URL | תנועה אמיתית מלקוחות |
+| אימות ה-challenge מול Meta | הודעות מאדמינים, מפתחים או testers |
+| test webhooks מלוח הבקרה | |
+
+test webhooks מספיקים לאימות **כל** הצינור — Worker, חתימה, סינון, dedupe,
+Apps Script, שורה בגיליון. מה שלא נבדק הוא רק המייל האחרון: שההודעה יוצאת
+מלקוח אמיתי.
+
+זה **המתנה, לא באג**. אין מה לתקן בקוד.
+
+## נתוני האפליקציה השנייה — היסטוריה
 
 קיום `phone_number_id` מתיישב עם Coexistence אבל לא מוכיח אותו. פאנל המספר
 מציג טאב פרופיל בלבד, בלי הגדרות API.
