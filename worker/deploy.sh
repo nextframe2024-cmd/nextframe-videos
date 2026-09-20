@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Sets the receiver's secrets and deploys it.
 #
-# Run from worker/. Each `wrangler secret put` prompts for the value and reads
+# Run from anywhere. Each `wrangler secret put` prompts for the value and reads
 # it without echoing, so no secret is passed as an argument or lands in shell
 # history.
 set -euo pipefail
@@ -13,25 +13,69 @@ command -v wrangler >/dev/null || {
   exit 1
 }
 
-echo "VERIFY_TOKEN — any string. Paste the same one into Meta's webhook form."
-echo "  Generate one with: openssl rand -hex 32"
-wrangler secret put VERIFY_TOKEN
-
+# A broken receiver that answers Meta's handshake is worse than one that never
+# deployed, so the tests gate the deploy.
+echo "Running tests..."
+npm test --silent >/dev/null || {
+  echo "tests failed — not deploying. Run 'npm test' to see why." >&2
+  exit 1
+}
+echo "Tests pass."
 echo
-echo "APP_SECRET — App Dashboard > App settings > Basic > App Secret."
-wrangler secret put APP_SECRET
 
-echo
-echo "SHEETS_WEBAPP_URL — the Apps Script web app /exec URL."
-wrangler secret put SHEETS_WEBAPP_URL
+if grep -q '^\[\[kv_namespaces\]\]' wrangler.toml; then
+  echo "KV dedupe: configured."
+else
+  echo "KV dedupe is not configured. Without it a Meta retry can write a lead"
+  echo "twice before the sheet's own dedupe catches it."
+  read -r -p "Create the SEEN namespace now? [y/N] " answer
+  if [[ ${answer:-} =~ ^[Yy]$ ]]; then
+    # The id is the only thing needed from the output; formats have varied, so
+    # take the first quoted 32-hex string.
+    created=$(wrangler kv namespace create SEEN)
+    echo "$created"
+    id=$(printf '%s' "$created" | grep -oE '[0-9a-f]{32}' | head -1)
+    if [[ -n $id ]]; then
+      cat >>wrangler.toml <<TOML
 
+[[kv_namespaces]]
+binding = "SEEN"
+id = "$id"
+TOML
+      echo "Wrote the binding to wrangler.toml."
+    else
+      echo "Could not read the id from that output — add the binding to" >&2
+      echo "wrangler.toml by hand before deploying." >&2
+    fi
+  fi
+fi
 echo
-echo "SHEETS_TOKEN — the TOKEN constant inside Code.gs."
-wrangler secret put SHEETS_TOKEN
 
-echo
+# Existing secrets are left alone, so a redeploy does not mean retyping them.
+existing=$(wrangler secret list 2>/dev/null || echo '[]')
+
+put_secret() {
+  local name=$1 hint=$2
+  if printf '%s' "$existing" | grep -q "\"$name\""; then
+    echo "$name: already set, skipping."
+    return
+  fi
+  echo "$name — $hint"
+  wrangler secret put "$name"
+  echo
+}
+
+put_secret VERIFY_TOKEN \
+  "any string; paste the same one into Meta's form. Generate: openssl rand -hex 32"
+put_secret APP_SECRET \
+  "App Dashboard > App settings > Basic > App Secret."
+put_secret SHEETS_WEBAPP_URL \
+  "the Apps Script web app /exec URL."
+put_secret SHEETS_TOKEN \
+  "the TOKEN constant inside Code.gs."
+
 wrangler deploy
 
 echo
-echo "Done. Give the printed URL to Meta as the Callback URL, with the same"
-echo "VERIFY_TOKEN, and subscribe to the 'messages' field."
+echo "Give the printed URL to Meta as the Callback URL, with the same"
+echo "VERIFY_TOKEN, then subscribe to the 'messages' field."

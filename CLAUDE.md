@@ -26,23 +26,27 @@ worker/            Cloudflare Worker — מקבל ה-webhooks
   src/signature.js HMAC על הבייטים הגולמיים
   src/parse.js     נרמול הודעת Cloud API → שורת ליד
   src/sinks.js     ← הקובץ היחיד להחליף במעבר לטבלאות אמיתיות
-  test/            32 טסטים
+  test/            42 טסטים
 apps-script/
   logic.gs         לוגיקה טהורה, נבדקת מ-worker/test
-  Code.gs          doPost, גישה לגיליון, נעילה
+  Code.gs          doPost, גישה לגיליון, נעילה — נבדק מול גלובלים מדומים
 docs/              הקמה, מחקר, חוזה הסוכן
 ```
 
 ## פקודות
 
 ```bash
-cd worker && npm test     # 32 טסטים, מקומי, בלי רשת
+cd worker && npm test     # 42 טסטים, מקומי, בלי רשת
 cd worker && wrangler deploy
 ```
 
-הטסטים של `logic.gs` מריצים את הקובץ **verbatim** דרך `new Function`, כדי
-שהכיסוי יהיה על הקוד שנפרס ולא על העתק שלו. אין להעתיק לוגיקה מ-`logic.gs`
-לטסט — לשנות שם, ולתת לטסט לקרוא.
+הטסטים של `logic.gs` ושל `Code.gs` מריצים את הקבצים **verbatim** דרך
+`new Function`, כדי שהכיסוי יהיה על הקוד שנפרס ולא על העתק שלו. אין להעתיק
+לוגיקה מהם לטסט — לשנות שם, ולתת לטסט לקרוא.
+
+`doPost` נבדק מול `ContentService`, `SpreadsheetApp` ו-`LockService` מדומים,
+עם גיליון מגובה במערך. זה מכסה את שער ה-`TOKEN` ואת החיווט בין קריאת
+ה-dedupe לכתיבה — כולל משלוח חוזר שנכתב כבר, המצב שה-KV לא תופס.
 
 ## אל תשבור את אלה
 
