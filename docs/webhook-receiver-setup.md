@@ -39,7 +39,8 @@
 
 ## שלב 2 — הפריסה של ה-Worker
 
-הדרך הקצרה — `./deploy.sh` מבקש את ארבעת הסודות אחד-אחד ופורס. או ידנית:
+הדרך הקצרה — `./deploy.sh` (או `deploy.cmd` ב-Windows) מבקש את ארבעת הסודות
+אחד-אחד ופורס. **להריץ אחד מהם, לא את שניהם.** או ידנית:
 
 ```bash
 cd worker
@@ -181,3 +182,20 @@ Apps Script מגיש **snapshot** של הקוד, לא את הקוד החי. שי
 הוא סוד משותף בין Meta ל-Worker, ו**לא צריך לעבור דרך שום סוכן או צ'אט**.
 מייצרים אותו, מכניסים ב-`wrangler secret put` ומקלידים את אותו ערך בטופס של
 Meta. אין סיבה להדביק אותו בשיחה.
+
+
+## Windows
+
+`deploy.sh` הוא bash. ב-cmd יש `deploy.cmd` שעושה את אותו דבר. הרצף המלא
+ממחשב נקי:
+
+```cmd
+git clone -b claude/new-session-ly3gub https://github.com/nextframe2024-cmd/nextframe-videos.git
+cd nextframe-videos\worker
+npm install -g wrangler
+wrangler login
+deploy.cmd
+```
+
+`npm test` עובד ב-cmd — התבנית מצוטטת ב-`package.json`, ו-Node מרחיב אותה
+בעצמו במקום להסתמך על ה-shell.
