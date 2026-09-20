@@ -133,3 +133,70 @@ test('survives a message type it does not know', () => {
   assert.equal(lead.text, '');
   assert.equal(lead.media_id, '');
 });
+
+// --- envelope shapes -------------------------------------------------------
+
+test('reads the bare shape the App Dashboard test button sends', () => {
+  // No object, no entry, no changes. A parser expecting only the wrapped form
+  // found nothing, answered 200, and Meta reported the test as successful.
+  const [lead] = parseLeads({
+    field: 'messages',
+    value: {
+      metadata,
+      contacts: [{ wa_id: '972500000000', profile: { name: 'Test' } }],
+      messages: [
+        {
+          from: '972500000000',
+          id: 'wamid.DASHBOARD',
+          timestamp: '1758000100',
+          type: 'text',
+          text: { body: 'dashboard probe' },
+        },
+      ],
+    },
+  });
+
+  assert.equal(lead.wa_message_id, 'wamid.DASHBOARD');
+  assert.equal(lead.name, 'Test');
+  assert.equal(lead.text, 'dashboard probe');
+  assert.equal(lead.phone_number_id, '106540352242922');
+});
+
+test('drops a bare status-only delivery', () => {
+  const payload = {
+    field: 'messages',
+    value: { metadata, statuses: [{ id: 'wamid.X', status: 'read' }] },
+  };
+  assert.deepEqual(parseLeads(payload), []);
+});
+
+test('reads an entry envelope with no object key', () => {
+  const payload = {
+    entry: [
+      {
+        changes: [
+          {
+            field: 'messages',
+            value: {
+              metadata,
+              messages: [
+                { from: '1', id: 'wamid.NOOBJ', timestamp: '1758000101', type: 'text', text: { body: 'x' } },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  assert.equal(parseLeads(payload)[0].wa_message_id, 'wamid.NOOBJ');
+});
+
+test('still refuses a bare payload from another product', () => {
+  const payload = {
+    object: 'instagram',
+    field: 'messages',
+    value: { metadata, messages: [{ from: '1', id: 'wamid.IG', timestamp: '1', type: 'text' }] },
+  };
+  assert.deepEqual(parseLeads(payload), []);
+});

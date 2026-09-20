@@ -127,3 +127,35 @@ test('rejects a method that is neither GET nor POST', async () => {
 
   assert.equal(response.status, 405);
 });
+
+test('a dashboard test delivery reaches the sink', async () => {
+  // The end-to-end shape of the failure: Meta reported the test webhook as
+  // successful while nothing was ever written.
+  const sent = [];
+  globalThis.fetch = async (_url, init) => {
+    sent.push(JSON.parse(init.body));
+    return { ok: true, status: 200, text: async () => '{"ok":true,"appended":1}' };
+  };
+
+  const dashboardShape = {
+    field: 'messages',
+    value: {
+      metadata: { phone_number_id: '715040758363218' },
+      messages: [
+        { from: '972500000000', id: 'wamid.DASH', timestamp: '1758000200', type: 'text', text: { body: 'probe' } },
+      ],
+    },
+  };
+
+  const response = await worker.fetch(signedPost(dashboardShape), {
+    ...ENV,
+    SHEETS_WEBAPP_URL: 'https://script.google.com/x/exec',
+    SHEETS_TOKEN: 'tok',
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(sent.length, 1);
+  assert.equal(sent[0].leads.length, 1);
+  assert.equal(sent[0].leads[0].wa_message_id, 'wamid.DASH');
+  assert.equal(sent[0].leads[0].text, 'probe');
+});
