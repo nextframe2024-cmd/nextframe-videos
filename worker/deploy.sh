@@ -51,6 +51,14 @@ TOML
 fi
 echo
 
+# Deploy before the secrets. The upload is the first and only check against
+# the Workers runtime — neither the test suite nor `--dry-run` catches what it
+# rejects — and a deployed Worker with no secrets is harmless: without
+# APP_SECRET every delivery is refused, and Meta is not pointed at it yet.
+echo "Deploying (validates the script against the Workers runtime)..."
+wrangler deploy
+echo
+
 # Existing secrets are left alone, so a redeploy does not mean retyping them.
 existing=$(wrangler secret list 2>/dev/null || echo '[]')
 
@@ -73,8 +81,6 @@ put_secret SHEETS_WEBAPP_URL \
   "the Apps Script web app /exec URL."
 put_secret SHEETS_TOKEN \
   "the TOKEN constant inside Code.gs."
-
-wrangler deploy
 
 echo
 echo "Give the printed URL to Meta as the Callback URL, with the same"

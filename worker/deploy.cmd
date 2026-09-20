@@ -35,6 +35,19 @@ if errorlevel 1 (
   echo.
 )
 
+rem Deploy before the secrets. The upload is the first and only check against
+rem the Workers runtime - neither the test suite nor --dry-run catches what it
+rem rejects - and a deployed Worker with no secrets is harmless: without
+rem APP_SECRET every delivery is refused, and Meta is not pointed at it yet.
+echo Deploying (validates the script against the Workers runtime)...
+call wrangler deploy
+if errorlevel 1 (
+  echo.
+  echo Deploy failed - fix the error above before setting secrets.
+  exit /b 1
+)
+echo.
+
 rem Each prompt reads the value without echoing it, so no secret is passed as
 rem an argument or kept in command history.
 echo VERIFY_TOKEN - any string; paste the same one into Meta's form.
@@ -49,8 +62,6 @@ echo.
 echo SHEETS_TOKEN - the TOKEN constant inside Code.gs.
 call wrangler secret put SHEETS_TOKEN
 echo.
-
-call wrangler deploy
 
 echo.
 echo Give the printed URL to Meta as the Callback URL, with the same

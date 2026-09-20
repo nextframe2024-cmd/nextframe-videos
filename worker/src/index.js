@@ -9,8 +9,15 @@ import { selectSink } from './sinks.js';
  * POST — signed event delivery.
  */
 
-/** Meta retries any non-2xx, so a sink failure must surface as 500. */
-const OK = new Response('ok', { status: 200 });
+/**
+ * A fresh 200 per call. Meta retries any non-2xx, so a sink failure has to
+ * surface as 500 and everything else as this.
+ *
+ * Deliberately a function, not a module-scope constant: the Workers runtime
+ * refuses a Response built in global scope, and a single instance could not
+ * be returned twice anyway, since a body can only be read once.
+ */
+const ok = () => new Response('ok', { status: 200 });
 
 function handleVerification(url, env) {
   const params = url.searchParams;
@@ -67,14 +74,14 @@ async function handleEvent(request, env) {
   } catch {
     // Malformed JSON will never parse on retry, so accept and drop it.
     console.warn('unparseable body');
-    return OK;
+    return ok();
   }
 
   const leads = parseLeads(payload);
-  if (leads.length === 0) return OK; // Status updates and other noise.
+  if (leads.length === 0) return ok(); // Status updates and other noise.
 
   const fresh = await filterSeen(leads, env);
-  if (fresh.length === 0) return OK;
+  if (fresh.length === 0) return ok();
 
   try {
     await selectSink(env).write(fresh);
@@ -84,7 +91,7 @@ async function handleEvent(request, env) {
   }
 
   await markSeen(fresh, env);
-  return OK;
+  return ok();
 }
 
 export default {
