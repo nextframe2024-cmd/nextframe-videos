@@ -21,6 +21,7 @@ const HEADERS = ['received_at', 'wa_message_id', 'from', 'text', 'status', 'note
 function fakeSheet(rows) {
   return {
     rows,
+    getName: () => 'Untitled',
     getLastRow: () => rows.length,
     getLastColumn: () => rows[0].length,
     getRange(row, col, numRows, numCols) {
@@ -112,7 +113,7 @@ test('appends a lead in the sheet column order', () => {
     leads: [lead('wamid.A', 'מחפש הצעה')],
   });
 
-  assert.deepEqual(result, { ok: true, appended: 1, skipped: 0, received: 1 });
+  assert.deepEqual(result, { ok: true, appended: 1, skipped: 0, received: 1, sheet: 'Untitled' });
   assert.equal(sheet.rows.length, 2);
 
   const row = sheet.rows[1];
@@ -127,8 +128,8 @@ test('a retried delivery appends nothing', () => {
   const doPost = load(sheet, { token: 'right' });
   const body = { token: 'right', leads: [lead('wamid.A', 'hi')] };
 
-  assert.deepEqual(post(doPost, body), { ok: true, appended: 1, skipped: 0, received: 1 });
-  assert.deepEqual(post(doPost, body), { ok: true, appended: 0, skipped: 1, received: 1 });
+  assert.deepEqual(post(doPost, body), { ok: true, appended: 1, skipped: 0, received: 1, sheet: 'Untitled' });
+  assert.deepEqual(post(doPost, body), { ok: true, appended: 0, skipped: 1, received: 1, sheet: 'Untitled' });
   assert.equal(sheet.rows.length, 2);
 });
 
@@ -142,7 +143,7 @@ test('appends only the unseen leads of a partly retried batch', () => {
     leads: [lead('wamid.A', 'first'), lead('wamid.B', 'second')],
   });
 
-  assert.deepEqual(result, { ok: true, appended: 1, skipped: 1, received: 2 });
+  assert.deepEqual(result, { ok: true, appended: 1, skipped: 1, received: 2, sheet: 'Untitled' });
   assert.equal(sheet.rows.length, 3);
 });
 
@@ -187,6 +188,6 @@ test('dedupes after the key column is physically moved', () => {
   assert.equal(sheet.rows[1][0], 'wamid.A'); // Column A now holds the key.
 
   const retry = post(doPost, body);
-  assert.deepEqual(retry, { ok: true, appended: 0, skipped: 1, received: 1 });
+  assert.deepEqual(retry, { ok: true, appended: 0, skipped: 1, received: 1, sheet: 'Untitled' });
   assert.equal(sheet.rows.length, 2);
 });

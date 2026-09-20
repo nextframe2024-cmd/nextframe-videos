@@ -97,6 +97,7 @@ function doPost(e) {
         appended: 0,
         skipped: skipped,
         received: leads.length,
+        sheet: sheet.getName(),
       });
     }
 
@@ -112,6 +113,7 @@ function doPost(e) {
       appended: rows.length,
       skipped: skipped,
       received: leads.length,
+      sheet: sheet.getName(),
     };
     if (warning) result.warning = warning;
     return jsonOut(result);
