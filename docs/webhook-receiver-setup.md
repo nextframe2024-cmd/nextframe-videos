@@ -199,3 +199,28 @@ deploy.cmd
 
 `npm test` עובד ב-cmd — התבנית מצוטטת ב-`package.json`, ו-Node מרחיב אותה
 בעצמו במקום להסתמך על ה-shell.
+
+
+## אבחון כשל — `probe.mjs`
+
+`Successfully tested` בלוח הבקרה של Meta מדווח **שהבקשה נשלחה**, לא מה חזר.
+לכן בדיקה דרך Meta לא מבדילה בין 401, 200-בלי-כתיבה, ו-500.
+
+`probe.mjs` שולח משלוחים חתומים כראוי ישר ל-Worker ומדפיס את מה שחזר:
+
+```cmd
+set APP_SECRET=<מ-App settings ^> Basic>
+set VERIFY_TOKEN=<אותו ערך שהוזן ל-Worker>
+node probe.mjs https://whatsapp-webhook-receiver.nextframe.workers.dev
+```
+
+הסודות נקראים מהסביבה ולא מ-argv, כדי שלא ייכנסו להיסטוריית הפקודות. כל הרצה
+מייצרת `wa_message_id` חדש, כך ששכבות ה-dedupe לא יכולות להסתיר כתיבה שעבדה.
+
+| תוצאה | מה זה אומר |
+|---|---|
+| `POST unsigned` מחזיר 200 | אימות החתימה לא רץ. לעצור |
+| `POST signed` מחזיר 401 | `APP_SECRET` לא תואם בין Meta ל-Worker |
+| `POST signed` מחזיר 500 | ה-Worker תקין, הסינק דחה — `SHEETS_TOKEN` או ה-URL |
+| `POST signed` מחזיר 200 | הצינור עובד; אמורות להיתוסף שתי שורות |
+| `GET handshake` מחזיר 403 | `VERIFY_TOKEN` לא תואם |
