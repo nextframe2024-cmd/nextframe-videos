@@ -48,22 +48,46 @@ if errorlevel 1 (
 )
 echo.
 
+rem Skip secrets that already exist, so a redeploy is not four prompts again.
+call wrangler secret list > "%TEMP%\wa-secrets.txt" 2>nul
+
 rem Each prompt reads the value without echoing it, so no secret is passed as
 rem an argument or kept in command history.
-echo VERIFY_TOKEN - any string; paste the same one into Meta's form.
-call wrangler secret put VERIFY_TOKEN
+findstr /c:"VERIFY_TOKEN" "%TEMP%\wa-secrets.txt" >nul 2>&1
+if errorlevel 1 (
+  echo VERIFY_TOKEN - any string; paste the same one into Meta's form.
+  call wrangler secret put VERIFY_TOKEN
+) else (
+  echo VERIFY_TOKEN: already set, skipping.
+)
 echo.
-echo APP_SECRET - App Dashboard ^> App settings ^> Basic ^> App Secret.
-call wrangler secret put APP_SECRET
+findstr /c:"APP_SECRET" "%TEMP%\wa-secrets.txt" >nul 2>&1
+if errorlevel 1 (
+  echo APP_SECRET - App Dashboard ^> App settings ^> Basic ^> App Secret.
+  call wrangler secret put APP_SECRET
+) else (
+  echo APP_SECRET: already set, skipping.
+)
 echo.
-echo SHEETS_WEBAPP_URL - the Apps Script web app /exec URL.
-call wrangler secret put SHEETS_WEBAPP_URL
+findstr /c:"SHEETS_WEBAPP_URL" "%TEMP%\wa-secrets.txt" >nul 2>&1
+if errorlevel 1 (
+  echo SHEETS_WEBAPP_URL - the Apps Script web app /exec URL.
+  call wrangler secret put SHEETS_WEBAPP_URL
+) else (
+  echo SHEETS_WEBAPP_URL: already set, skipping.
+)
 echo.
-echo SHEETS_TOKEN - the TOKEN constant inside Code.gs.
-call wrangler secret put SHEETS_TOKEN
+findstr /c:"SHEETS_TOKEN" "%TEMP%\wa-secrets.txt" >nul 2>&1
+if errorlevel 1 (
+  echo SHEETS_TOKEN - the TOKEN constant inside Code.gs.
+  call wrangler secret put SHEETS_TOKEN
+) else (
+  echo SHEETS_TOKEN: already set, skipping.
+)
 echo.
 
 echo.
 echo Give the printed URL to Meta as the Callback URL, with the same
 echo VERIFY_TOKEN, then subscribe to the 'messages' field.
+del "%TEMP%\wa-secrets.txt" >nul 2>&1
 endlocal

@@ -60,11 +60,16 @@ wrangler deploy
 echo
 
 # Existing secrets are left alone, so a redeploy does not mean retyping them.
-existing=$(wrangler secret list 2>/dev/null || echo '[]')
+# `--format json` where supported, otherwise the plain table; the name is
+# matched bare rather than quoted, since only JSON output quotes it and
+# matching quotes silently skipped nothing.
+existing=$(wrangler secret list --format json 2>/dev/null \
+  || wrangler secret list 2>/dev/null \
+  || true)
 
 put_secret() {
   local name=$1 hint=$2
-  if printf '%s' "$existing" | grep -q "\"$name\""; then
+  if printf '%s' "$existing" | grep -qw "$name"; then
     echo "$name: already set, skipping."
     return
   fi
