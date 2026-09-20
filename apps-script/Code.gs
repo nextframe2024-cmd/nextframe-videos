@@ -41,8 +41,22 @@ function doPost(e) {
     return jsonOut({ ok: false, error: 'unauthorized' });
   }
 
-  var leads = payload.leads;
-  if (!Array.isArray(leads) || leads.length === 0) {
+  // Accepts `leads` or `messages` for a batch, or a single `message` object.
+  // A payload carrying none of these is a contract mismatch, not an empty
+  // batch: reporting ok here would let the Worker mark the lead written and
+  // drop it, so it has to be an error.
+  var leads;
+  if (Array.isArray(payload.leads)) {
+    leads = payload.leads;
+  } else if (Array.isArray(payload.messages)) {
+    leads = payload.messages;
+  } else if (payload.message && typeof payload.message === 'object') {
+    leads = [payload.message];
+  } else {
+    return jsonOut({ ok: false, error: 'no leads, messages or message in payload' });
+  }
+
+  if (leads.length === 0) {
     return jsonOut({ ok: true, appended: 0 });
   }
 
