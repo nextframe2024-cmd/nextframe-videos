@@ -15,3 +15,10 @@ compatibility_date = "2026-09-01"
 #   APP_SECRET         App Dashboard > Settings > Basic > App Secret
 #   SHEETS_WEBAPP_URL  the Apps Script web app /exec URL
 #   SHEETS_TOKEN       the shared secret inside the Apps Script
+
+# Persisted logs. `wrangler tail` is a live window: it drops connection, and a
+# gap in it is indistinguishable from Meta not delivering. Workers Logs keeps
+# requests queryable after the fact, which is what a delivery question needs.
+[observability]
+enabled = true
+head_sampling_rate = 1
