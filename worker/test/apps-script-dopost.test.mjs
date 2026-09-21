@@ -191,3 +191,30 @@ test('dedupes after the key column is physically moved', () => {
   assert.deepEqual(retry, { ok: true, appended: 0, skipped: 1, received: 1, sheet: 'Untitled' });
   assert.equal(sheet.rows.length, 2);
 });
+
+/**
+ * doGet exists so the deployment can be confirmed without writing a row, and
+ * it is covered here because it was missing from this file while the live
+ * deployment answered it — the drift that made the suite cover a different
+ * script from the one the Worker posts to.
+ */
+test('doGet reports the service without touching the sheet', () => {
+  const rows = [HEADERS.slice()];
+  const sheet = fakeSheet(rows);
+  const doGet = new Function(
+    'ContentService',
+    'SpreadsheetApp',
+    'LockService',
+    `${LOGIC}\n${CODE}\nreturn doGet;`,
+  )(
+    {
+      MimeType: { JSON: 'application/json' },
+      createTextOutput: (text) => ({ setMimeType: () => text }),
+    },
+    { openById: () => ({ getSheets: () => [sheet] }) },
+    { getScriptLock: () => ({ waitLock: () => {}, releaseLock: () => {} }) },
+  );
+
+  assert.deepEqual(JSON.parse(doGet()), { ok: true, service: 'whatsapp-leads-sink' });
+  assert.equal(rows.length, 1, 'header only; doGet must not append');
+});

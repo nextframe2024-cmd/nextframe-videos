@@ -43,6 +43,17 @@ function existingIds_(sheet, idColumn) {
   return idLookup_(sheet.getRange(2, idColumn, lastRow - 1, 1).getValues());
 }
 
+/**
+ * A liveness check, so the deployment can be confirmed without writing a row.
+ *
+ * Reconstructed from what the live /exec returns; the editor is the original.
+ * It existed there while this file did not have it, which meant the suite was
+ * covering a different script from the one the Worker talks to.
+ */
+function doGet() {
+  return jsonOut({ ok: true, service: 'whatsapp-leads-sink' });
+}
+
 function doPost(e) {
   var payload;
   try {
