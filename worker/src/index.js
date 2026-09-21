@@ -31,6 +31,14 @@ function handleVerification(url, env) {
       headers: { 'Content-Type': 'text/plain' },
     });
   }
+
+  // Meta's dashboard reports only that it sent the request, so a refusal has
+  // to say so here or it is invisible. Never log the tokens themselves.
+  console.warn(
+    `403 handshake refused: mode=${mode}, verify_token ${
+      env.VERIFY_TOKEN ? 'mismatch' : 'not configured on the Worker'
+    }`,
+  );
   return new Response('forbidden', { status: 403 });
 }
 
@@ -66,7 +74,16 @@ async function handleEvent(request, env) {
     request.headers.get('X-Hub-Signature-256'),
     env.APP_SECRET,
   );
-  if (!valid) return new Response('bad signature', { status: 401 });
+  if (!valid) {
+    // The most likely cause by far is APP_SECRET differing from the app's,
+    // and without this line a 401 leaves no trace in `wrangler tail`.
+    console.warn(
+      `401 signature rejected: header ${
+        request.headers.get('X-Hub-Signature-256') ? 'present' : 'absent'
+      }, APP_SECRET ${env.APP_SECRET ? 'configured' : 'NOT configured'}, body ${rawBody.length}b`,
+    );
+    return new Response('bad signature', { status: 401 });
+  }
 
   let payload;
   try {
@@ -78,7 +95,13 @@ async function handleEvent(request, env) {
   }
 
   const leads = parseLeads(payload);
-  if (leads.length === 0) return ok(); // Status updates and other noise.
+  if (leads.length === 0) {
+    // Usually a delivery-status event, which is expected. Logged anyway: it is
+    // also what an unrecognised envelope looks like, and the two are
+    // indistinguishable without saying which keys arrived.
+    console.log(`no leads in delivery; top-level keys: ${Object.keys(payload).join(',')}`);
+    return ok();
+  }
 
   const fresh = await filterSeen(leads, env);
   if (fresh.length === 0) return ok();
@@ -91,6 +114,7 @@ async function handleEvent(request, env) {
   }
 
   await markSeen(fresh, env);
+  console.log(`wrote ${fresh.length} lead(s)`);
   return ok();
 }
 
